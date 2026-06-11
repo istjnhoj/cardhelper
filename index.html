@@ -380,6 +380,15 @@
             document.body.classList.toggle('dark-mode');
         }
 
+        // Ignore height-only resizes (scrolling address bar) to avoid accidental grid regeneration
+        let windowWidth = window.innerWidth;
+        window.addEventListener('resize', () => {
+            if (window.innerWidth !== windowWidth) {
+                windowWidth = window.innerWidth;
+                generateGrid();
+            }
+        });
+
         // Load saved settings on page load
         window.addEventListener('DOMContentLoaded', () => {
             if (localStorage.getItem('savedRows')) {
@@ -390,8 +399,6 @@
             }
             generateGrid();
         });
-
-        window.addEventListener('resize', generateGrid);
     </script>
 </body>
 </html>
