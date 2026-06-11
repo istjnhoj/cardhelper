@@ -67,7 +67,7 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             text-align: center;
             width: 100%;
-            max-width: 400px;
+            max-width: 450px;
             box-sizing: border-box;
         }
         label { margin-right: 4px; font-weight: bold; font-size: 12px; }
@@ -113,12 +113,11 @@
             gap: 10px;
             align-items: center;
             width: 100%;
-            max-width: 450px;
+            max-width: 100%;
             box-sizing: border-box;
         }
 
         .grid-wrapper {
-            width: 100%;
             padding: 10px;
             border-radius: 8px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
@@ -126,6 +125,8 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            width: 100%;
+            max-width: 450px; /* Locks max boundary to mobile widths */
             overflow: hidden;
         }
 
@@ -236,15 +237,14 @@
             const cols = parseInt(document.getElementById('cols').value) || 1;
             const container = document.getElementById('grid-container');
             
-            // Allow 32px total for padding margins, determine cell dimension strictly off column count
-            const availableWidth = window.innerWidth - 32;
+            // Measure the space inside the grid wrapper (screen width restricted by safe margins)
+            const availableWidth = Math.min(window.innerWidth * 0.95, 430) - 20;
+            const maxSide = Math.max(rows, cols);
             const gap = 4;
             
-            // Base the cell size entirely on the number of columns to prevent screen overflow
-            let cellSize = Math.floor((availableWidth - (cols - 1) * gap) / cols);
-            
-            // Put limits so cells do not become microscopically small or awkwardly huge
-            cellSize = Math.min(Math.max(cellSize, 25), 80);
+            // Dynamically shrink the cell size strictly based on whichever side (row/col) is larger
+            let cellSize = Math.floor((availableWidth - (maxSide - 1) * gap) / maxSide);
+            cellSize = Math.min(Math.max(cellSize, 20), 75);
 
             container.style.gridTemplateRows = `repeat(${rows}, ${cellSize}px)`;
             container.style.gridTemplateColumns = `repeat(${cols}, ${cellSize}px)`;
