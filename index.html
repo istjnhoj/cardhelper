@@ -157,7 +157,7 @@
             border: 2px solid transparent;
             box-sizing: border-box;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            touch-action: none;
+            touch-action: none; /* Prevents scrolling while dragging swatches */
         }
         .swatch:active { cursor: grabbing; }
         .swatch.selected {
@@ -195,10 +195,26 @@
         }
         .cell:hover { border-color: var(--cell-hover-border); transform: scale(1.02); }
         
+        /* Floating element shown when dragging a color on mobile/mouse */
+        #floating-preview {
+            position: fixed;
+            width: 35px;
+            height: 35px;
+            border-radius: 4px;
+            pointer-events: none;
+            z-index: 1000;
+            display: none;
+            border: 2px solid #fff;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            transform: translate(-50%, -50%);
+        }
+
         p { color: var(--subtext-color); text-align: center; max-width: 400px; font-weight: bold; text-shadow: 0 1px 3px rgba(255,255,255,0.5); margin: 0; font-size: 12px; }
     </style>
 </head>
 <body>
+
+    <div id="floating-preview"></div>
 
     <div class="controls">
         <label for="rows">Rows:</label>
@@ -219,20 +235,21 @@
         </div>
 
         <div class="palette">
-            <div class="swatch" style="background-color: #ff3b30;" draggable="true" onclick="selectColor(this, '#ff3b30')" ontouchstart="setTouchColor('#ff3b30')" ondragstart="drag(event, '#ff3b30')"></div>
-            <div class="swatch" style="background-color: #ff9500;" draggable="true" onclick="selectColor(this, '#ff9500')" ontouchstart="setTouchColor('#ff9500')" ondragstart="drag(event, '#ff9500')"></div>
-            <div class="swatch" style="background-color: #ffcc00;" draggable="true" onclick="selectColor(this, '#ffcc00')" ontouchstart="setTouchColor('#ffcc00')" ondragstart="drag(event, '#ffcc00')"></div>
-            <div class="swatch" style="background-color: #4cd964;" draggable="true" onclick="selectColor(this, '#4cd964')" ontouchstart="setTouchColor('#4cd964')" ondragstart="drag(event, '#4cd964')"></div>
-            <div class="swatch" style="background-color: #5ac8fa;" draggable="true" onclick="selectColor(this, '#5ac8fa')" ontouchstart="setTouchColor('#5ac8fa')" ondragstart="drag(event, '#5ac8fa')"></div>
-            <div class="swatch" style="background-color: #5856d6;" draggable="true" onclick="selectColor(this, '#5856d6')" ontouchstart="setTouchColor('#5856d6')" ondragstart="drag(event, '#5856d6')"></div>
-            <div class="swatch" style="background-color: #ff2d55;" draggable="true" onclick="selectColor(this, '#ff2d55')" ontouchstart="setTouchColor('#ff2d55')" ondragstart="drag(event, '#ff2d55')"></div>
-            <div class="swatch eraser-swatch" onclick="selectColor(this, '')" ontouchstart="setTouchColor('')" title="Eraser">🧹</div>
+            <div class="swatch" style="background-color: #ff3b30;" data-color="#ff3b30" draggable="true" onclick="selectColor(this, '#ff3b30')" ondragstart="drag(event, '#ff3b30')"></div>
+            <div class="swatch" style="background-color: #ff9500;" data-color="#ff9500" draggable="true" onclick="selectColor(this, '#ff9500')" ondragstart="drag(event, '#ff9500')"></div>
+            <div class="swatch" style="background-color: #ffcc00;" data-color="#ffcc00" draggable="true" onclick="selectColor(this, '#ffcc00')" ondragstart="drag(event, '#ffcc00')"></div>
+            <div class="swatch" style="background-color: #4cd964;" data-color="#4cd964" draggable="true" onclick="selectColor(this, '#4cd964')" ondragstart="drag(event, '#4cd964')"></div>
+            <div class="swatch" style="background-color: #5ac8fa;" data-color="#5ac8fa" draggable="true" onclick="selectColor(this, '#5ac8fa')" ondragstart="drag(event, '#5ac8fa')"></div>
+            <div class="swatch" style="background-color: #5856d6;" data-color="#5856d6" draggable="true" onclick="selectColor(this, '#5856d6')" ondragstart="drag(event, '#5856d6')"></div>
+            <div class="swatch" style="background-color: #ff2d55;" data-color="#ff2d55" draggable="true" onclick="selectColor(this, '#ff2d55')" ondragstart="drag(event, '#ff2d55')"></div>
+            <div class="swatch eraser-swatch" data-color="" onclick="selectColor(this, '')" title="Eraser" draggable="true" ondragstart="drag(event, '')">🧹</div>
         </div>
     </div>
 
     <script>
         let currentlySelectedColor = null;
-        let touchColor = null;
+        let draggedColor = null;
+        const floatingPreview = document.getElementById('floating-preview');
 
         function generateGrid() {
             const rows = parseInt(document.getElementById('rows').value) || 1;
@@ -278,25 +295,42 @@
             }
         }
 
-        function setTouchColor(color) {
-            touchColor = color;
-        }
+        // Universal Mobile Touch/Mouse Drag & Drop Implementation
+        document.querySelectorAll('.swatch').forEach(swatch => {
+            swatch.addEventListener('pointerdown', (e) => {
+                draggedColor = swatch.getAttribute('data-color');
+                
+                floatingPreview.style.backgroundColor = draggedColor || 'rgba(255, 255, 255, 0.3)';
+                floatingPreview.style.display = 'block';
+                
+                // Deselect tap mode while dragging
+                document.querySelectorAll('.swatch').forEach(s => s.classList.remove('selected'));
+                currentlySelectedColor = null;
+                
+                e.preventDefault();
+            });
+        });
 
-        // Mobile Touch Drop Support
-        document.addEventListener('touchend', (e) => {
-            if (touchColor === null) return;
-            
-            const touch = e.changedTouches[0];
-            const element = document.elementFromPoint(touch.clientX, touch.clientY);
-            
-            if (element && element.classList.contains('cell')) {
-                element.style.backgroundColor = touchColor;
+        window.addEventListener('pointermove', (e) => {
+            if (draggedColor !== null) {
+                floatingPreview.style.left = e.clientX + 'px';
+                floatingPreview.style.top = e.clientY + 'px';
             }
-            
-            // Reset touch tracking
-            touchColor = null;
-            document.querySelectorAll('.swatch').forEach(s => s.classList.remove('selected'));
-            currentlySelectedColor = null;
+        });
+
+        window.addEventListener('pointerup', (e) => {
+            if (draggedColor !== null) {
+                floatingPreview.style.display = 'none';
+                
+                // Find element placed right beneath pointer
+                const dropTarget = document.elementFromPoint(e.clientX, e.clientY);
+                
+                if (dropTarget && dropTarget.classList.contains('cell')) {
+                    dropTarget.style.backgroundColor = draggedColor;
+                }
+                
+                draggedColor = null;
+            }
         });
 
         function selectColor(element, color) {
