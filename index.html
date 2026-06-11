@@ -39,7 +39,7 @@
 
         body {
             font-family: Arial, sans-serif;
-            padding: 15px;
+            padding: 10px;
             background: var(--bg-color);
             background-attachment: fixed;
             color: var(--text-color);
@@ -61,8 +61,8 @@
         }
 
         .controls {
-            margin-bottom: 15px;
-            padding: 12px;
+            margin-bottom: 10px;
+            padding: 10px;
             border-radius: 8px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             text-align: center;
@@ -70,11 +70,11 @@
             max-width: 450px;
             box-sizing: border-box;
         }
-        label { margin-right: 8px; font-weight: bold; font-size: 13px; }
+        label { margin-right: 6px; font-weight: bold; font-size: 12px; }
         input[type="number"] { 
-            width: 55px; 
-            padding: 5px; 
-            margin-right: 10px; 
+            width: 50px; 
+            padding: 4px; 
+            margin-right: 8px; 
             background-color: var(--cell-bg);
             color: var(--text-color);
             border: 1px solid var(--cell-border);
@@ -82,74 +82,75 @@
             backdrop-filter: blur(4px);
         }
         button { 
-            padding: 6px 12px; 
+            padding: 5px 10px; 
             background-color: var(--btn-bg); 
             color: var(--btn-text); 
             border: none; 
             border-radius: 4px; 
             cursor: pointer; 
             transition: background-color 0.2s, filter 0.2s;
-            margin-top: 5px;
-            font-size: 13px;
+            margin-top: 4px;
+            font-size: 12px;
         }
         button:hover { background-color: var(--btn-hover); filter: brightness(1.1); }
         
         .clear-btn {
             background-color: var(--clear-btn-bg);
-            margin-left: 5px;
+            margin-left: 4px;
         }
         .clear-btn:hover {
             background-color: var(--clear-btn-hover);
         }
 
         .theme-toggle {
-            margin-left: 5px;
+            margin-left: 4px;
             background-color: #4c566a;
         }
 
         .main-app {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 12px;
             align-items: center;
             width: 100%;
-            max-width: 600px;
+            max-width: 500px;
+            box-sizing: border-box;
         }
 
         .grid-wrapper {
             width: 100%;
-            padding: 15px;
+            padding: 10px;
             border-radius: 8px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             box-sizing: border-box;
             display: flex;
             justify-content: center;
             align-items: center;
+            overflow: hidden;
         }
 
         #grid-container {
             display: grid;
-            gap: 6px;
+            gap: 4px;
             transition: background-color 0.3s, border-color 0.3s;
-            width: 100%;
-            justify-content: center;
+            margin: 0 auto;
         }
 
         .palette {
-            padding: 12px;
+            padding: 10px;
             border-radius: 8px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 10px;
-            max-width: 400px;
+            gap: 8px;
+            max-width: 380px;
             box-sizing: border-box;
         }
 
         .swatch {
-            width: 38px;
-            height: 38px;
+            width: 36px;
+            height: 36px;
             border-radius: 4px;
             cursor: grab;
             border: 2px solid transparent;
@@ -178,8 +179,8 @@
         }
 
         .cell {
-            border: 2px solid var(--cell-border);
-            border-radius: 6px;
+            border: 1.5px solid var(--cell-border);
+            border-radius: 5px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -187,14 +188,12 @@
             background-color: var(--cell-bg);
             cursor: pointer;
             transition: background-color 0.1s, border-color 0.3s;
-            box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
-            width: 100%;
-            height: 100%;
+            box-shadow: inset 0 0 4px rgba(0,0,0,0.05);
             box-sizing: border-box;
         }
         .cell:hover { border-color: var(--cell-hover-border); transform: scale(1.02); }
         
-        p { color: var(--subtext-color); text-align: center; max-width: 500px; font-weight: bold; text-shadow: 0 1px 3px rgba(255,255,255,0.5); margin: 0; font-size: 13px; }
+        p { color: var(--subtext-color); text-align: center; max-width: 400px; font-weight: bold; text-shadow: 0 1px 3px rgba(255,255,255,0.5); margin: 0; font-size: 11px; }
     </style>
 </head>
 <body>
@@ -237,22 +236,26 @@
             const cols = parseInt(document.getElementById('cols').value) || 1;
             const container = document.getElementById('grid-container');
             
-            // Calculate dynamic size matching screen width minus paddings
-            const gap = 6;
-            const availableWidth = window.innerWidth * 0.85; 
-            const cellSize = Math.floor((availableWidth - (cols - 1) * gap) / cols);
+            // Measure the available width on screen (accounting for 20px body padding)
+            const availableWidth = window.innerWidth - 40;
+            const gap = 4;
             
-            // Limit minimum and maximum boundaries so cells remain functional
-            const finalSize = Math.max(35, Math.min(cellSize, 85));
+            // Automatically scale down cells so the entire grid fits perfectly on narrow screens
+            let cellSize = Math.floor((availableWidth - (cols - 1) * gap) / cols);
+            
+            // Keep bounds so it doesn't get microscopically small or awkwardly large (between 30px and 80px)
+            cellSize = Math.min(Math.max(cellSize, 30), 80);
 
-            container.style.gridTemplateRows = `repeat(${rows}, ${finalSize}px)`;
-            container.style.gridTemplateColumns = `repeat(${cols}, ${finalSize}px)`;
+            container.style.gridTemplateRows = `repeat(${rows}, ${cellSize}px)`;
+            container.style.gridTemplateColumns = `repeat(${cols}, ${cellSize}px)`;
             container.innerHTML = '';
 
             for (let r = 0; r < rows; r++) {
                 for (let c = 0; c < cols; c++) {
                     const cell = document.createElement('div');
                     cell.className = 'cell';
+                    cell.style.width = `${cellSize}px`;
+                    cell.style.height = `${cellSize}px`;
                     
                     cell.addEventListener('dragover', (e) => e.preventDefault());
                     cell.addEventListener('drop', (e) => {
