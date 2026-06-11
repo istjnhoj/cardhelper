@@ -6,9 +6,9 @@
     <title>Card Matching Helper Grid</title>
     <style>
         :root {
-            --bg-color: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%); /* Play Together Light Green Vibe */
+            --bg-color: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
             --text-color: #1b4332;
-            --container-bg: rgba(255, 255, 255, 0.3); /* Transparent Frosted Glass */
+            --container-bg: rgba(255, 255, 255, 0.3);
             --controls-bg: rgba(255, 255, 255, 0.35);
             --cell-bg: rgba(255, 255, 255, 0.2);
             --cell-border: rgba(27, 67, 50, 0.4);
@@ -22,24 +22,24 @@
         }
 
         body.dark-mode {
-            --bg-color: #434c54; /* Dark Grey Tone */
+            --bg-color: #434c54;
             --text-color: #d8f3dc;
-            --container-bg: rgba(40, 45, 50, 0.4); /* Dark Transparent Frosted Glass */
+            --container-bg: rgba(40, 45, 50, 0.4);
             --controls-bg: rgba(40, 45, 50, 0.45);
             --cell-bg: rgba(25, 30, 35, 0.3);
             --cell-border: rgba(216, 243, 220, 0.3);
             --cell-hover-border: #8fbcbb;
-            --btn-bg: #4c566a; /* Muted Slate Grey */
-            --btn-hover: #3b4252; /* Darker Slate Grey */
+            --btn-bg: #4c566a;
+            --btn-hover: #3b4252;
             --btn-text: #ffffff;
-            --clear-btn-bg: #bf616a; /* Muted Dark Red */
+            --clear-btn-bg: #bf616a;
             --clear-btn-hover: #ac535c;
             --subtext-color: #b7e4c7;
         }
 
         body {
             font-family: Arial, sans-serif;
-            padding: 20px;
+            padding: 15px;
             background: var(--bg-color);
             background-attachment: fixed;
             color: var(--text-color);
@@ -49,9 +49,10 @@
             transition: background 0.3s, color 0.3s;
             min-height: 100vh;
             box-sizing: border-box;
+            width: 100%;
+            overflow-x: hidden;
         }
         
-        /* Frosted glass effect */
         .controls, .palette, .grid-wrapper {
             background: var(--container-bg);
             backdrop-filter: blur(8px);
@@ -60,18 +61,20 @@
         }
 
         .controls {
-            margin-bottom: 20px;
-            padding: 15px;
+            margin-bottom: 15px;
+            padding: 12px;
             border-radius: 8px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            transition: background-color 0.3s, border-color 0.3s;
             text-align: center;
+            width: 100%;
+            max-width: 450px;
+            box-sizing: border-box;
         }
-        label { margin-right: 10px; font-weight: bold; }
+        label { margin-right: 8px; font-weight: bold; font-size: 13px; }
         input[type="number"] { 
-            width: 60px; 
+            width: 55px; 
             padding: 5px; 
-            margin-right: 15px; 
+            margin-right: 10px; 
             background-color: var(--cell-bg);
             color: var(--text-color);
             border: 1px solid var(--cell-border);
@@ -79,7 +82,7 @@
             backdrop-filter: blur(4px);
         }
         button { 
-            padding: 6px 15px; 
+            padding: 6px 12px; 
             background-color: var(--btn-bg); 
             color: var(--btn-text); 
             border: none; 
@@ -87,6 +90,7 @@
             cursor: pointer; 
             transition: background-color 0.2s, filter 0.2s;
             margin-top: 5px;
+            font-size: 13px;
         }
         button:hover { background-color: var(--btn-hover); filter: brightness(1.1); }
         
@@ -99,54 +103,53 @@
         }
 
         .theme-toggle {
-            margin-left: 10px;
+            margin-left: 5px;
             background-color: #4c566a;
         }
 
         .main-app {
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 15px;
             align-items: center;
+            width: 100%;
+            max-width: 600px;
         }
 
-        /* Scroll wrapper to prevent cut-off on wide/large grids */
         .grid-wrapper {
-            max-width: 900px;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-            padding: 20px;
+            width: 100%;
+            padding: 15px;
             border-radius: 8px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            margin-bottom: 10px;
             box-sizing: border-box;
             display: flex;
             justify-content: center;
+            align-items: center;
         }
 
         #grid-container {
             display: grid;
-            gap: 10px;
+            gap: 6px;
             transition: background-color 0.3s, border-color 0.3s;
-            margin: 0 auto;
+            width: 100%;
+            justify-content: center;
         }
 
         .palette {
-            padding: 15px;
+            padding: 12px;
             border-radius: 8px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 12px;
-            transition: background-color 0.3s, border-color 0.3s;
+            gap: 10px;
             max-width: 400px;
             box-sizing: border-box;
         }
 
         .swatch {
-            width: 40px;
-            height: 40px;
+            width: 38px;
+            height: 38px;
             border-radius: 4px;
             cursor: grab;
             border: 2px solid transparent;
@@ -167,7 +170,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            font-size: 18px;
             cursor: pointer;
         }
         body.dark-mode .eraser-swatch {
@@ -183,13 +186,15 @@
             position: relative;
             background-color: var(--cell-bg);
             cursor: pointer;
-            transition: background-color 0.1s, border-color 0.3s, width 0.2s, height 0.2s;
+            transition: background-color 0.1s, border-color 0.3s;
             box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
+            width: 100%;
+            height: 100%;
             box-sizing: border-box;
         }
         .cell:hover { border-color: var(--cell-hover-border); transform: scale(1.02); }
         
-        p { color: var(--subtext-color); text-align: center; max-width: 500px; font-weight: bold; text-shadow: 0 1px 3px rgba(255,255,255,0.5); margin: 0 0 10px 0; }
+        p { color: var(--subtext-color); text-align: center; max-width: 500px; font-weight: bold; text-shadow: 0 1px 3px rgba(255,255,255,0.5); margin: 0; font-size: 13px; }
     </style>
 </head>
 <body>
@@ -228,26 +233,27 @@
         let currentlySelectedColor = null;
 
         function generateGrid() {
-            const rows = document.getElementById('rows').value;
-            const cols = document.getElementById('cols').value;
+            const rows = parseInt(document.getElementById('rows').value) || 1;
+            const cols = parseInt(document.getElementById('cols').value) || 1;
             const container = document.getElementById('grid-container');
             
-            // Automatically detect mobile (screen width <= 600px) and scale square sizes
-            const isMobile = window.innerWidth <= 600;
-            const cellSize = isMobile ? 55 : 75;
+            // Calculate dynamic size matching screen width minus paddings
+            const gap = 6;
+            const availableWidth = window.innerWidth * 0.85; 
+            const cellSize = Math.floor((availableWidth - (cols - 1) * gap) / cols);
+            
+            // Limit minimum and maximum boundaries so cells remain functional
+            const finalSize = Math.max(35, Math.min(cellSize, 85));
 
-            container.style.gridTemplateRows = `repeat(${rows}, ${cellSize}px)`;
-            container.style.gridTemplateColumns = `repeat(${cols}, ${cellSize}px)`;
+            container.style.gridTemplateRows = `repeat(${rows}, ${finalSize}px)`;
+            container.style.gridTemplateColumns = `repeat(${cols}, ${finalSize}px)`;
             container.innerHTML = '';
 
             for (let r = 0; r < rows; r++) {
                 for (let c = 0; c < cols; c++) {
                     const cell = document.createElement('div');
                     cell.className = 'cell';
-                    cell.style.width = `${cellSize}px`;
-                    cell.style.height = `${cellSize}px`;
                     
-                    // Drag and drop support (Desktop)
                     cell.addEventListener('dragover', (e) => e.preventDefault());
                     cell.addEventListener('drop', (e) => {
                         e.preventDefault();
@@ -255,13 +261,10 @@
                         cell.style.backgroundColor = color;
                     });
 
-                    // Click / Tap support (Mobile & Desktop)
                     cell.addEventListener('click', () => {
                         if (currentlySelectedColor !== null) {
-                            // Apply the selected color
                             cell.style.backgroundColor = currentlySelectedColor;
                         } else {
-                            // If nothing is selected, clear the cell
                             cell.style.backgroundColor = '';
                         }
                     });
@@ -271,14 +274,11 @@
             }
         }
 
-        // Handle picking a color from the palette
         function selectColor(element, color) {
-            // If it's already selected, unselect it
             if (element.classList.contains('selected')) {
                 element.classList.remove('selected');
                 currentlySelectedColor = null;
             } else {
-                // Remove selection from all, select this one
                 document.querySelectorAll('.swatch').forEach(s => s.classList.remove('selected'));
                 element.classList.add('select-ui');
                 element.classList.add('selected');
@@ -288,12 +288,10 @@
 
         function drag(event, color) {
             event.dataTransfer.setData('color', color);
-            // Deselect tap mode when dragging begins
             document.querySelectorAll('.swatch').forEach(s => s.classList.remove('selected'));
             currentlySelectedColor = null;
         }
 
-        // Clears background color of all cells without changing grid size
         function clearAll() {
             const cells = document.querySelectorAll('.cell');
             cells.forEach(cell => {
@@ -305,10 +303,7 @@
             document.body.classList.toggle('dark-mode');
         }
 
-        // Initialize default grid
         generateGrid();
-        
-        // Adjust dynamically if the screen is rotated/resized
         window.addEventListener('resize', generateGrid);
     </script>
 </body>
