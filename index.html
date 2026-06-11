@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Card Matching Helper Grid</title>
+    <style>
+        :root {
+            --bg-color: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%); /* Play Together Light Green Vibe */
+            --text-color: #1b4332;
+            --container-bg: rgba(255, 255, 255, 0.3); /* Transparent Frosted Glass */
+            --controls-bg: rgba(255, 255, 255, 0.35);
+            --cell-bg: rgba(255, 255, 255, 0.2);
+            --cell-border: rgba(27, 67, 50, 0.4);
+            --cell-hover-border: #2d6a4f;
+            --btn-bg: #2d6a4f;
+            --btn-hover: #1b4332;
+            --btn-text: #ffffff;
+            --clear-btn-bg: #bb3e03;
+            --clear-btn-hover: #9b2226;
+            --subtext-color: #1b4332;
+        }
+
+        body.dark-mode {
+            --bg-color: #434c54; /* Dark Grey Tone */
+            --text-color: #d8f3dc;
+            --container-bg: rgba(40, 45, 50, 0.4); /* Dark Transparent Frosted Glass */
+            --controls-bg: rgba(40, 45, 50, 0.45);
+            --cell-bg: rgba(25, 30, 35, 0.3);
+            --cell-border: rgba(216, 243, 220, 0.3);
+            --cell-hover-border: #8fbcbb;
+            --btn-bg: #4c566a; /* Muted Slate Grey */
+            --btn-hover: #3b4252; /* Darker Slate Grey */
+            --btn-text: #ffffff;
+            --clear-btn-bg: #bf616a; /* Muted Dark Red */
+            --clear-btn-hover: #ac535c;
+            --subtext-color: #b7e4c7;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: var(--bg-color);
+            background-attachment: fixed;
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: background 0.3s, color 0.3s;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+        
+        /* Frosted glass effect */
+        .controls, .palette, #grid-container {
+            background: var(--container-bg);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .controls {
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        label { margin-right: 10px; font-weight: bold; }
+        input[type="number"] { 
+            width: 60px; 
+            padding: 5px; 
+            margin-right: 15px; 
+            background-color: var(--cell-bg);
+            color: var(--text-color);
+            border: 1px solid var(--cell-border);
+            border-radius: 4px;
+            backdrop-filter: blur(4px);
+        }
+        button { 
+            padding: 6px 15px; 
+            background-color: var(--btn-bg); 
+            color: var(--btn-text); 
+            border: none; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            transition: background-color 0.2s, filter 0.2s;
+        }
+        button:hover { background-color: var(--btn-hover); filter: brightness(1.1); }
+        
+        .clear-btn {
+            background-color: var(--clear-btn-bg);
+            margin-left: 5px;
+        }
+        .clear-btn:hover {
+            background-color: var(--clear-btn-hover);
+        }
+
+        .theme-toggle {
+            margin-left: 10px;
+            background-color: #4c566a;
+        }
+
+        .main-app {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .palette {
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        .swatch {
+            width: 40px;
+            height: 40px;
+            border-radius: 4px;
+            cursor: grab;
+            border: 2px solid transparent;
+            box-sizing: border-box;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .swatch:active { cursor: grabbing; }
+        .swatch.selected {
+            border: 2px solid #fff;
+            transform: scale(1.1);
+            box-shadow: 0 0 10px rgba(0,0,0,0.4);
+        }
+        body:not(.dark-mode) .swatch.selected { border: 2px solid #000; }
+
+        .eraser-swatch {
+            background-color: rgba(255, 255, 255, 0.3);
+            border: 2px solid var(--cell-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        body.dark-mode .eraser-swatch {
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+
+        #grid-container {
+            display: grid;
+            gap: 10px;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        .cell {
+            width: 100px;
+            height: 100px;
+            border: 2px solid var(--cell-border);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background-color: var(--cell-bg);
+            cursor: pointer;
+            transition: background-color 0.1s, border-color 0.3s;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
+        }
+        .cell:hover { border-color: var(--cell-hover-border); transform: scale(1.02); }
+        
+        p { color: var(--subtext-color); text-align: center; max-width: 500px; font-weight: bold; text-shadow: 0 1px 3px rgba(255,255,255,0.5); }
+    </style>
+</head>
+<body>
+
+    <div class="controls">
+        <label for="rows">Rows:</label>
+        <input type="number" id="rows" min="1" max="10" value="4">
+        <label for="cols">Columns:</label>
+        <input type="number" id="cols" min="1" max="10" value="4">
+        <button onclick="generateGrid()">Generate / Reset Grid</button>
+        <button class="clear-btn" onclick="clearAll()">Clear All</button>
+        <button class="theme-toggle" onclick="toggleTheme()">🌓 Toggle Dark/Light</button>
+    </div>
+
+    <p style="margin-top:0;">Brought to you by an <b>ISTJ</b></p>
+
+    <div class="main-app">
+        <div class="palette">
+            <div class="swatch" style="background-color: #ff3b30;" draggable="true" onclick="selectColor(this, '#ff3b30')" ondragstart="drag(event, '#ff3b30')"></div>
+            <div class="swatch" style="background-color: #ff9500;" draggable="true" onclick="selectColor(this, '#ff9500')" ondragstart="drag(event, '#ff9500')"></div>
+            <div class="swatch" style="background-color: #ffcc00;" draggable="true" onclick="selectColor(this, '#ffcc00')" ondragstart="drag(event, '#ffcc00')"></div>
+            <div class="swatch" style="background-color: #4cd964;" draggable="true" onclick="selectColor(this, '#4cd964')" ondragstart="drag(event, '#4cd964')"></div>
+            <div class="swatch" style="background-color: #5ac8fa;" draggable="true" onclick="selectColor(this, '#5ac8fa')" ondragstart="drag(event, '#5ac8fa')"></div>
+            <div class="swatch" style="background-color: #5856d6;" draggable="true" onclick="selectColor(this, '#5856d6')" ondragstart="drag(event, '#5856d6')"></div>
+            <div class="swatch" style="background-color: #ff2d55;" draggable="true" onclick="selectColor(this, '#ff2d55')" ondragstart="drag(event, '#ff2d55')"></div>
+            <div class="swatch eraser-swatch" onclick="selectColor(this, '')" title="Eraser">🧹</div>
+        </div>
+
+        <div id="grid-container"></div>
+    </div>
+
+    <script>
+        let currentlySelectedColor = null;
+
+        function generateGrid() {
+            const rows = document.getElementById('rows').value;
+            const cols = document.getElementById('cols').value;
+            const container = document.getElementById('grid-container');
+            
+            container.style.gridTemplateRows = `repeat(${rows}, 100px)`;
+            container.style.gridTemplateColumns = `repeat(${cols}, 100px)`;
+            container.innerHTML = '';
+
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    
+                    // Drag and drop support (Desktop)
+                    cell.addEventListener('dragover', (e) => e.preventDefault());
+                    cell.addEventListener('drop', (e) => {
+                        e.preventDefault();
+                        const color = e.dataTransfer.getData('color');
+                        cell.style.backgroundColor = color;
+                    });
+
+                    // Click / Tap support (Mobile & Desktop)
+                    cell.addEventListener('click', () => {
+                        if (currentlySelectedColor !== null) {
+                            // Apply the selected color
+                            cell.style.backgroundColor = currentlySelectedColor;
+                        } else {
+                            // If nothing is selected, clear the cell
+                            cell.style.backgroundColor = '';
+                        }
+                    });
+
+                    container.appendChild(cell);
+                }
+            }
+        }
+
+        // Handle picking a color from the palette
+        function selectColor(element, color) {
+            // If it's already selected, unselect it
+            if (element.classList.contains('selected')) {
+                element.classList.remove('selected');
+                currentlySelectedColor = null;
+            } else {
+                // Remove selection from all, select this one
+                document.querySelectorAll('.swatch').forEach(s => s.classList.remove('selected'));
+                element.classList.add('select-ui');
+                element.classList.add('selected');
+                currentlySelectedColor = color;
+            }
+        }
+
+        function drag(event, color) {
+            event.dataTransfer.setData('color', color);
+            // Deselect tap mode when dragging begins
+            document.querySelectorAll('.swatch').forEach(s => s.classList.remove('selected'));
+            currentlySelectedColor = null;
+        }
+
+        // Clears background color of all cells without changing grid size
+        function clearAll() {
+            const cells = document.querySelectorAll('.cell');
+            cells.forEach(cell => {
+                cell.style.backgroundColor = '';
+            });
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+        }
+
+        // Initialize default grid
+        generateGrid();
+    </script>
+</body>
+</html>
