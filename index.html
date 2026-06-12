@@ -291,16 +291,14 @@
             localStorage.setItem('savedRows', rows);
             localStorage.setItem('savedCols', cols);
             
+            // Calculate cellSize purely based on width to prevent table vanishing acts
             const isDesktop = window.innerWidth >= 768;
-            const availableWidth = isDesktop ? (window.innerWidth * 0.82) - 140 : window.innerWidth * 0.88;
-            const availableHeight = window.innerHeight * 0.65;
+            const availableWidth = isDesktop ? (window.innerWidth * 0.75) - 140 : window.innerWidth * 0.85;
             const gap = 4;
             
-            const widthCell = Math.floor((availableWidth - (cols - 1) * gap) / cols);
-            const heightCell = Math.floor((availableHeight - (rows - 1) * gap) / rows);
-            
-            let cellSize = Math.min(widthCell, heightCell);
-            cellSize = Math.min(Math.max(cellSize, 15), 80);
+            let cellSize = Math.floor((availableWidth - (cols - 1) * gap) / cols);
+            // Constrain sizes safely
+            cellSize = Math.min(Math.max(cellSize, 25), 85);
 
             container.style.gridTemplateRows = `repeat(${rows}, ${cellSize}px)`;
             container.style.gridTemplateColumns = `repeat(${cols}, ${cellSize}px)`;
