@@ -160,7 +160,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            overflow: hidden; /* Prevents horizontal scrollbars from generating */
+            overflow: hidden; /* Prevents overflow scrollbars */
         }
 
         @media (min-width: 768px) {
@@ -336,19 +336,14 @@
             localStorage.setItem('savedRows', rows);
             localStorage.setItem('savedCols', cols);
             
-            // Calculate max available space without overflow constraint
+            // Stable adaptive width calculation
             const isDesktop = window.innerWidth >= 768;
-            const padding = 60; 
-            const availableWidth = Math.min(window.innerWidth - padding, 650);
-            const availableHeight = window.innerHeight * 0.5;
+            const availableWidth = isDesktop ? Math.min(window.innerWidth * 0.75, 650) : window.innerWidth * 0.85;
             const gap = 6;
             
-            // Derive cell dimensions based on fit constraints dynamically
-            let cellWidth = (availableWidth - (cols - 1) * gap) / cols;
-            let cellHeight = (availableHeight - (rows - 1) * gap) / rows;
-            
-            let cellSize = Math.min(cellWidth, cellHeight);
-            cellSize = Math.min(Math.max(cellSize, 20), 70);
+            let cellSize = Math.floor((availableWidth - (cols - 1) * gap) / cols);
+            // Safe bounds so cells don't vanish or break layout
+            cellSize = Math.min(Math.max(cellSize, 25), 75);
 
             container.style.gridTemplateRows = `repeat(${rows}, ${cellSize}px)`;
             container.style.gridTemplateColumns = `repeat(${cols}, ${cellSize}px)`;
