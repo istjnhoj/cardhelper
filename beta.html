@@ -493,4 +493,22 @@
         });
 
         window.addEventListener('DOMContentLoaded', () => {
-            const isDesktop = window.innerWidth
+            const isDesktop = window.innerWidth >= 768;
+
+            if (localStorage.getItem('savedRows')) {
+                document.getElementById('rows').value = localStorage.getItem('savedRows');
+            } else {
+                document.getElementById('rows').value = isDesktop ? 4 : 2;
+            }
+
+            if (localStorage.getItem('savedCols')) {
+                document.getElementById('cols').value = localStorage.getItem('savedCols');
+            } else {
+                document.getElementById('cols').value = isDesktop ? 2 : 4;
+            }
+
+            generateGrid();
+        });
+    </script>
+</body>
+</html>
