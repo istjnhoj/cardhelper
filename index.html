@@ -385,4 +385,87 @@
         });
 
         window.addEventListener('pointerup', (e) => {
-            if (activePointerId !== e
+            if (activePointerId !== e.pointerId) return;
+            
+            if (draggedColor !== null) {
+                floatingPreview.style.display = 'none';
+                
+                const dropTarget = document.elementFromPoint(e.clientX, e.clientY);
+                
+                if (dropTarget && dropTarget.classList.contains('cell')) {
+                    applyItemToCell(dropTarget, draggedColor);
+                }
+                
+                e.target.releasePointerCapture?.(e.pointerId);
+                draggedColor = null;
+                activePointerId = null;
+            }
+        });
+        
+        window.addEventListener('pointercancel', (e) => {
+            if (activePointerId === e.pointerId) {
+                floatingPreview.style.display = 'none';
+                draggedColor = null;
+                activePointerId = null;
+            }
+        });
+
+        function selectColor(element, color) {
+            if (element.classList.contains('selected')) {
+                element.classList.remove('selected');
+                currentlySelectedColor = null;
+            } else {
+                document.querySelectorAll('.swatch').forEach(s => s.classList.remove('side-ui'));
+                document.querySelectorAll('.swatch').forEach(s => s.classList.remove('selected'));
+                element.classList.add('selected');
+                currentlySelectedColor = color;
+            }
+        }
+
+        function drag(event, item) {
+            event.dataTransfer.setData('item', item);
+            document.querySelectorAll('.swatch').forEach(s => s.classList.remove('selected'));
+            currentlySelectedColor = null;
+        }
+
+        function clearAll() {
+            const cells = document.querySelectorAll('.cell');
+            cells.forEach(cell => {
+                cell.style.backgroundImage = '';
+                cell.style.backgroundColor = '';
+            });
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+        }
+
+        let windowWidth = window.innerWidth;
+        window.addEventListener('resize', () => {
+            if (window.innerWidth !== windowWidth) {
+                windowWidth = window.innerWidth;
+                generateGrid();
+            }
+        });
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const isDesktop = window.innerWidth >= 768;
+
+            // Apply saved layout or defaults: 2 rows/4 cols for mobile, 4 rows/2 cols for PC
+            if (localStorage.getItem('savedRows')) {
+                document.getElementById('rows').value = localStorage.getItem('savedRows');
+            } else {
+                document.getElementById('rows').value = isDesktop ? 4 : 2;
+            }
+
+            if (localStorage.getItem('savedCols')) {
+                document.getElementById('cols').value = localStorage.getItem('savedCols');
+            } else {
+                document.getElementById('cols').value = isDesktop ? 2 : 4;
+            }
+
+            generateGrid();
+        });
+    </script>
+</body>
+</html>
