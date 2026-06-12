@@ -6,55 +6,47 @@
     <title>Card Matching Helper Grid</title>
     <style>
         :root {
-            --bg-color: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
-            --text-color: #0f172a;
-            --container-bg: rgba(255, 255, 255, 0.6);
-            --cell-bg: rgba(255, 255, 255, 0.4);
-            --cell-border: #cbd5e1;
-            --cell-hover-border: #6366f1;
-            --btn-bg: #4f46e5;
-            --btn-hover: #4338ca;
+            --bg-color: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            --text-color: #1b4332;
+            --container-bg: rgba(255, 255, 255, 0.3);
+            --controls-bg: rgba(255, 255, 255, 0.35);
+            --cell-bg: rgba(255, 255, 255, 0.2);
+            --cell-border: rgba(27, 67, 50, 0.4);
+            --cell-hover-border: #2d6a4f;
+            --btn-bg: #2d6a4f;
+            --btn-hover: #1b4332;
             --btn-text: #ffffff;
-            --clear-btn-bg: #ef4444;
-            --clear-btn-hover: #dc2626;
-            --theme-btn-bg: #334155;
-            --theme-btn-hover: #1e293b;
-            --subtext-color: #475569;
-            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --clear-btn-bg: #bb3e03;
+            --clear-btn-hover: #9b2226;
+            --subtext-color: #1b4332;
         }
 
         body.dark-mode {
-            --bg-color: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            --text-color: #f8fafc;
-            --container-bg: rgba(30, 41, 59, 0.5);
-            --cell-bg: rgba(15, 23, 42, 0.4);
-            --cell-border: #334155;
-            --cell-hover-border: #818cf8;
-            --btn-bg: #6366f1;
-            --btn-hover: #4f46e5;
+            --bg-color: #434c54;
+            --text-color: #d8f3dc;
+            --container-bg: rgba(40, 45, 50, 0.4);
+            --controls-bg: rgba(40, 45, 50, 0.45);
+            --cell-bg: rgba(25, 30, 35, 0.3);
+            --cell-border: rgba(216, 243, 220, 0.3);
+            --cell-hover-border: #8fbcbb;
+            --btn-bg: #4c566a;
+            --btn-hover: #3b4252;
             --btn-text: #ffffff;
-            --clear-btn-bg: #f87171;
-            --clear-btn-hover: #ef4444;
-            --theme-btn-bg: #475569;
-            --theme-btn-hover: #334155;
-            --subtext-color: #94a3b8;
-            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.25);
+            --clear-btn-bg: #bf616a;
+            --clear-btn-hover: #ac535c;
+            --subtext-color: #b7e4c7;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            padding: 16px 16px 40px 16px;
+            font-family: Arial, sans-serif;
+            padding: 10px 10px 30px 10px;
             background: var(--bg-color);
             background-attachment: fixed;
             color: var(--text-color);
             display: flex;
             flex-direction: column;
             align-items: center;
-            transition: background 0.3s ease, color 0.3s ease;
+            transition: background 0.3s, color 0.3s;
             min-height: 100vh;
             box-sizing: border-box;
             width: 100%;
@@ -65,78 +57,62 @@
         
         .controls, .palette, .grid-wrapper {
             background: var(--container-bg);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            box-shadow: var(--shadow-lg);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .controls {
-            margin-bottom: 20px;
-            padding: 16px;
-            border-radius: 16px;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             text-align: center;
             width: 100%;
-            max-width: 440px;
+            max-width: 420px;
             box-sizing: border-box;
         }
-        
-        label { 
-            margin-right: 6px; 
-            font-weight: 600; 
-            font-size: 13px; 
-            letter-spacing: 0.5px;
-        }
-        
+        label { margin-right: 4px; font-weight: bold; font-size: 12px; }
         input[type="number"] { 
-            width: 56px; 
-            padding: 8px 10px; 
-            margin-right: 12px; 
+            width: 50px; 
+            padding: 4px; 
+            margin-right: 6px; 
             background-color: var(--cell-bg);
             color: var(--text-color);
-            border: 1.5px solid var(--cell-border);
-            border-radius: 8px;
-            font-size: 14px;
-            outline: none;
-            transition: border-color 0.2s, background-color 0.3s;
+            border: 1px solid var(--cell-border);
+            border-radius: 4px;
+            backdrop-filter: blur(4px);
         }
-        input[type="number"]:focus {
-            border-color: var(--cell-hover-border);
-        }
-
         button { 
-            padding: 10px 16px; 
+            padding: 5px 10px; 
             background-color: var(--btn-bg); 
             color: var(--btn-text); 
             border: none; 
-            border-radius: 10px; 
+            border-radius: 4px; 
             cursor: pointer; 
-            font-weight: 600;
-            font-size: 13px;
-            letter-spacing: 0.3px;
-            box-shadow: var(--shadow-sm);
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            margin: 4px;
+            transition: background-color 0.2s, filter 0.2s;
+            margin-top: 4px;
+            font-size: 11px;
         }
-        button:hover { 
-            background-color: var(--btn-hover); 
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-md);
-        }
-        button:active {
-            transform: translateY(1px);
-        }
+        button:hover { background-color: var(--btn-hover); filter: brightness(1.1); }
         
-        .clear-btn { background-color: var(--clear-btn-bg); }
-        .clear-btn:hover { background-color: var(--clear-btn-hover); }
+        .clear-btn {
+            background-color: var(--clear-btn-bg);
+            margin-left: 4px;
+        }
+        .clear-btn:hover {
+            background-color: var(--clear-btn-hover);
+        }
 
-        .theme-toggle { background-color: var(--theme-btn-bg); }
-        .theme-toggle:hover { background-color: var(--theme-btn-hover); }
+        .theme-toggle {
+            margin-left: 4px;
+            background-color: #4c566a;
+        }
 
         .main-app {
             display: flex;
             flex-direction: column;
-            gap: 24px;
+            gap: 16px;
             align-items: center;
             width: 95vw;
             max-width: 1000px;
@@ -148,19 +124,19 @@
                 flex-direction: row;
                 align-items: flex-start;
                 justify-content: center;
-                gap: 32px;
             }
         }
 
         .grid-wrapper {
             width: 100%;
-            padding: 20px;
-            border-radius: 20px;
+            padding: 12px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             box-sizing: border-box;
             display: flex;
             justify-content: center;
             align-items: center;
-            overflow: hidden; /* Prevents overflow scrollbars */
+            overflow: hidden; /* Prevent horizontal scrollbars */
         }
 
         @media (min-width: 768px) {
@@ -173,57 +149,50 @@
 
         #grid-container {
             display: grid;
-            gap: 6px;
+            gap: 4px;
             transition: background-color 0.3s, border-color 0.3s;
             margin: 0 auto;
         }
 
         .palette {
-            padding: 20px;
-            border-radius: 20px;
+            padding: 12px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             display: grid;
-            grid-template-columns: repeat(5, 64px);
+            grid-template-columns: repeat(5, 60px);
             justify-content: center;
-            gap: 16px;
+            gap: 12px;
             box-sizing: border-box;
-            max-width: 550px;
         }
 
         @media (min-width: 768px) {
             .palette {
-                grid-template-columns: repeat(2, 64px);
+                grid-template-columns: repeat(2, 60px);
             }
         }
 
         .swatch {
-            width: 64px;
-            height: 64px;
-            border-radius: 12px;
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
             cursor: grab;
-            border: 2.5px solid transparent;
+            border: 2px solid transparent;
             box-sizing: border-box;
-            box-shadow: var(--shadow-md);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             touch-action: none;
             object-fit: cover;
-            transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
         }
-        .swatch:hover {
-            transform: scale(1.05);
-        }
-        .swatch:active { 
-            cursor: grabbing; 
-            transform: scale(0.98);
-        }
+        .swatch:active { cursor: grabbing; }
         .swatch.selected {
-            border-color: #ffffff;
-            transform: scale(1.08);
-            box-shadow: 0 0 16px rgba(99, 102, 241, 0.6);
+            border: 2px solid #fff;
+            transform: scale(1.1);
+            box-shadow: 0 0 10px rgba(0,0,0,0.4);
         }
-        body:not(.dark-mode) .swatch.selected { border-color: #312e81; }
+        body:not(.dark-mode) .swatch.selected { border: 2px solid #000; }
 
         .eraser-swatch {
-            background-color: rgba(255, 255, 255, 0.5);
-            border: 2.5px solid var(--cell-border);
+            background-color: rgba(255, 255, 255, 0.3);
+            border: 2px solid var(--cell-border);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -231,12 +200,12 @@
             cursor: pointer;
         }
         body.dark-mode .eraser-swatch {
-            background-color: rgba(15, 23, 42, 0.6);
+            background-color: rgba(0, 0, 0, 0.2);
         }
 
         .cell {
-            border: 2px solid var(--cell-border);
-            border-radius: 10px;
+            border: 1.5px solid var(--cell-border);
+            border-radius: 5px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -246,44 +215,30 @@
             background-position: center;
             background-repeat: no-repeat;
             cursor: pointer;
-            transition: background-color 0.1s, border-color 0.2s, transform 0.2s, box-shadow 0.2s;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+            transition: background-color 0.1s, border-color 0.3s;
+            box-shadow: inset 0 0 4px rgba(0,0,0,0.05);
             box-sizing: border-box;
         }
-        .cell:hover { 
-            border-color: var(--cell-hover-border); 
-            transform: scale(1.03);
-            z-index: 1;
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
-        }
+        .cell:hover { border-color: var(--cell-hover-border); transform: scale(1.02); }
         
         #floating-preview {
             position: fixed;
-            width: 64px;
-            height: 64px;
-            border-radius: 12px;
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
             pointer-events: none;
             z-index: 1000;
             display: none;
-            border: 3px solid #ffffff;
+            border: 2px solid #fff;
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+            box-shadow: 8px 14px 20px rgba(0, 0, 0, 0.45);
             transform: translate(-50%, -50%) scale(1.15);
             transition: box-shadow 0.15s ease, transform 0.15s ease;
         }
 
-        p { 
-            color: var(--subtext-color); 
-            text-align: center; 
-            max-width: 400px; 
-            font-weight: 600; 
-            margin: 0; 
-            font-size: 13px; 
-            letter-spacing: 0.5px;
-        }
-        p b { color: var(--cell-hover-border); }
+        p { color: var(--subtext-color); text-align: center; max-width: 400px; font-weight: bold; text-shadow: 0 1px 3px rgba(255,255,255,0.5); margin: 0; font-size: 12px; }
     </style>
 </head>
 <body>
@@ -336,14 +291,17 @@
             localStorage.setItem('savedRows', rows);
             localStorage.setItem('savedCols', cols);
             
-            // Stable adaptive width calculation
+            // Auto-fitting math to stay fit securely in the screen without overflowing
             const isDesktop = window.innerWidth >= 768;
-            const availableWidth = isDesktop ? Math.min(window.innerWidth * 0.75, 650) : window.innerWidth * 0.85;
-            const gap = 6;
+            const availableWidth = isDesktop ? Math.min((window.innerWidth * 0.75) - 140, 650) : window.innerWidth * 0.80;
+            const availableHeight = window.innerHeight * 0.5;
+            const gap = 4;
             
-            let cellSize = Math.floor((availableWidth - (cols - 1) * gap) / cols);
-            // Safe bounds so cells don't vanish or break layout
-            cellSize = Math.min(Math.max(cellSize, 25), 75);
+            const widthCell = Math.floor((availableWidth - (cols - 1) * gap) / cols);
+            const heightCell = Math.floor((availableHeight - (rows - 1) * gap) / rows);
+            
+            let cellSize = Math.min(widthCell, heightCell);
+            cellSize = Math.min(Math.max(cellSize, 20), 75);
 
             container.style.gridTemplateRows = `repeat(${rows}, ${cellSize}px)`;
             container.style.gridTemplateColumns = `repeat(${cols}, ${cellSize}px)`;
@@ -394,8 +352,8 @@
                 
                 draggedColor = swatch.getAttribute('data-item');
                 
-                floatingPreview.style.width = '64px';
-                floatingPreview.style.height = '64px';
+                floatingPreview.style.width = '60px';
+                floatingPreview.style.height = '60px';
                 
                 if (draggedColor && draggedColor.includes('.')) {
                     floatingPreview.style.backgroundImage = `url('${draggedColor}')`;
