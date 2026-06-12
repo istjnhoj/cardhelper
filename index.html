@@ -36,8 +36,6 @@
             --btn-text: #ffffff;
             --clear-btn-bg: #bf616a;
             --clear-btn-hover: #ac535c;
-            --lock-btn-bg: #5e6472;
-            --lock-btn-hover: #4c5361;
             --subtext-color: #b7e4c7;
         }
 
@@ -156,22 +154,23 @@
         }
 
         .palette {
-            padding: 10px;
+            padding: 12px;
             border-radius: 8px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 8px;
-            max-width: 360px;
+            gap: 10px;
+            max-width: 460px;
             box-sizing: border-box;
             touch-action: auto;
         }
 
+        /* Swatch size increased from 35px to 48px */
         .swatch {
-            width: 35px;
-            height: 35px;
-            border-radius: 4px;
+            width: 48px;
+            height: 48px;
+            border-radius: 6px;
             cursor: grab;
             border: 2px solid transparent;
             box-sizing: border-box;
@@ -193,7 +192,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 22px;
+            font-size: 28px;
             cursor: pointer;
         }
         body.dark-mode .eraser-swatch {
@@ -223,9 +222,9 @@
         
         #floating-preview {
             position: fixed;
-            width: 40px;
-            height: 40px;
-            border-radius: 4px;
+            width: 56px;
+            height: 56px;
+            border-radius: 6px;
             pointer-events: none;
             z-index: 1000;
             display: none;
@@ -354,6 +353,10 @@
                 activePointerId = e.pointerId;
                 
                 draggedColor = swatch.getAttribute('data-item');
+                
+                // Match the enlarged preview size
+                floatingPreview.style.width = '48px';
+                floatingPreview.style.height = '48px';
                 
                 if (draggedColor && draggedColor.includes('.')) {
                     floatingPreview.style.backgroundImage = `url('${draggedColor}')`;
