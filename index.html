@@ -278,8 +278,8 @@
             <img src="image3.png" class="swatch" data-item="image3.png" alt="Card 3" draggable="true" onclick="selectColor(this, 'image3.png')" ondragstart="drag(event, 'image3.png')">
             <img src="image4.png" class="swatch" data-item="image4.png" alt="Card 4" draggable="true" onclick="selectColor(this, 'image4.png')" ondragstart="drag(event, 'image4.png')">
             <img src="image5.png" class="swatch" data-item="image5.png" alt="Card 5" draggable="true" onclick="selectColor(this, 'image5.png')" ondragstart="drag(event, 'image5.png')">
-            <img src="image6.png" class="swatch" data-item="image6.png" alt="Card 6" draggable="true" onclick="selectColor(this, 'image6.png')" ondragstart="drag(event, 'image6.png')">
             <img src="image9.png" class="swatch" data-item="image9.png" alt="Card 9" draggable="true" onclick="selectColor(this, 'image9.png')" ondragstart="drag(event, 'image9.png')">
+            <img src="image6.png" class="swatch" data-item="image6.png" alt="Card 6" draggable="true" onclick="selectColor(this, 'image6.png')" ondragstart="drag(event, 'image6.png')">
             <img src="image7.png" class="swatch" data-item="image7.png" alt="Card 7" draggable="true" onclick="selectColor(this, 'image7.png')" ondragstart="drag(event, 'image7.png')">
             <img src="image8.png" class="swatch" data-item="image8.png" alt="Card 8" draggable="true" onclick="selectColor(this, 'image8.png')" ondragstart="drag(event, 'image8.png')">
             <div class="swatch eraser-swatch" data-item="" onclick="selectColor(this, '')" title="Eraser" draggable="true" ondragstart="drag(event, '')">🧹</div>
@@ -356,7 +356,6 @@
         document.querySelectorAll('.swatch').forEach(swatch => {
             swatch.addEventListener('pointerdown', (e) => {
                 if (activePointerId !== null) return;
-                activePointerEvent = e.pointerId;
                 activePointerId = e.pointerId;
                 
                 draggedColor = swatch.getAttribute('data-item');
@@ -377,21 +376,6 @@
 
                 document.querySelectorAll('.swatch').forEach(s => s.classList.remove('selected'));
                 currentlySelectedColor = null;
-                currentlySelectedColor = null; // reset
-                currentlySelectedColor = null;
-                currentlySelectedColor = null;
-                currentlySelectedColor = null;
-                currentlySelectedColor = null;
-                currentlySelectedColor = null;
-                currentlySelectedColor = null;
-                currentlySelectedColor = null;
-                currentlySelectedColor = null;
-                currentlySelectedColor = null;
-                currentlySelectedColor = null;
-                currentlySelectedColor = null;
-currentlySelectedColor = null;
-currentlySelectedColor = null;
-currentlySelectedColor = null;
                 
                 e.preventDefault();
             });
