@@ -39,7 +39,7 @@
 
         body {
             font-family: Arial, sans-serif;
-            padding: 10px;
+            padding: 10px 10px 30px 10px;
             background: var(--bg-color);
             background-attachment: fixed;
             color: var(--text-color);
@@ -50,9 +50,8 @@
             min-height: 100vh;
             box-sizing: border-box;
             width: 100%;
-            overflow: hidden;
-            overscroll-behavior: none;
-            touch-action: none;
+            overflow-y: auto; /* Allows natural scrolling when elements exceed screen height */
+            overflow-x: hidden;
         }
         
         .controls, .palette, .grid-wrapper {
@@ -71,7 +70,6 @@
             width: 100%;
             max-width: 420px;
             box-sizing: border-box;
-            touch-action: auto;
         }
         label { margin-right: 4px; font-weight: bold; font-size: 12px; }
         input[type="number"] { 
@@ -94,7 +92,6 @@
             transition: background-color 0.2s, filter 0.2s;
             margin-top: 4px;
             font-size: 11px;
-            touch-action: auto;
         }
         button:hover { background-color: var(--btn-hover); filter: brightness(1.1); }
         
@@ -119,7 +116,6 @@
             width: 95vw;
             max-width: 1000px;
             box-sizing: border-box;
-            touch-action: auto;
         }
 
         @media (min-width: 768px) {
@@ -141,7 +137,6 @@
             align-items: center;
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
-            touch-action: pan-x;
         }
 
         @media (min-width: 768px) {
@@ -169,7 +164,6 @@
             gap: 12px;
             max-width: 550px;
             box-sizing: border-box;
-            touch-action: auto;
         }
 
         @media (min-width: 768px) {
