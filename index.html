@@ -154,23 +154,21 @@
             margin: 0 auto;
         }
 
+        /* Palette configured as a 5-column grid on mobile, 2-column on desktop */
         .palette {
             padding: 12px;
             border-radius: 8px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            display: flex;
-            flex-wrap: wrap;
+            display: grid;
+            grid-template-columns: repeat(5, 60px);
             justify-content: center;
             gap: 12px;
-            max-width: 550px;
             box-sizing: border-box;
         }
 
         @media (min-width: 768px) {
             .palette {
-                flex-direction: column;
-                align-items: center;
-                width: auto;
+                grid-template-columns: repeat(2, 60px);
             }
         }
 
@@ -451,7 +449,6 @@
         window.addEventListener('DOMContentLoaded', () => {
             const isDesktop = window.innerWidth >= 768;
 
-            // Apply saved layout or defaults: 2 rows/4 cols for mobile, 4 rows/2 cols for PC
             if (localStorage.getItem('savedRows')) {
                 document.getElementById('rows').value = localStorage.getItem('savedRows');
             } else {
