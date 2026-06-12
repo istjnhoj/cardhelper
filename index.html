@@ -510,6 +510,482 @@
     </script>
 </body>
 </html>
+            --btn-text: #ffffff;
+            --clear-btn-bg: #f87171;
+            --clear-btn-hover: #ef4444;
+            --theme-btn-bg: #475569;
+            --theme-btn-hover: #334155;
+            --subtext-color: #94a3b8;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.25);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            padding: 16px 16px 40px 16px;
+            background: var(--bg-color);
+            background-attachment: fixed;
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: background 0.3s ease, color 0.3s ease;
+            min-height: 100vh;
+            box-sizing: border-box;
+            width: 100%;
+            overflow-y: auto;
+            overflow-x: hidden;
+            margin: 0;
+        }
+        
+        .controls, .palette, .grid-wrapper {
+            background: var(--container-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .controls {
+            margin-bottom: 20px;
+            padding: 16px;
+            border-radius: 16px;
+            text-align: center;
+            width: 100%;
+            max-width: 440px;
+            box-sizing: border-box;
+        }
+        
+        label { 
+            margin-right: 6px; 
+            font-weight: 600; 
+            font-size: 13px; 
+            letter-spacing: 0.5px;
+        }
+        
+        input[type="number"] { 
+            width: 56px; 
+            padding: 8px 10px; 
+            margin-right: 12px; 
+            background-color: var(--cell-bg);
+            color: var(--text-color);
+            border: 1.5px solid var(--cell-border);
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s, background-color 0.3s;
+        }
+        input[type="number"]:focus {
+            border-color: var(--cell-hover-border);
+        }
+
+        button { 
+            padding: 10px 16px; 
+            background-color: var(--btn-bg); 
+            color: var(--btn-text); 
+            border: none; 
+            border-radius: 10px; 
+            cursor: pointer; 
+            font-weight: 600;
+            font-size: 13px;
+            letter-spacing: 0.3px;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            margin: 4px;
+        }
+        button:hover { 
+            background-color: var(--btn-hover); 
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+        button:active {
+            transform: translateY(1px);
+        }
+        
+        .clear-btn { background-color: var(--clear-btn-bg); }
+        .clear-btn:hover { background-color: var(--clear-btn-hover); }
+
+        .theme-toggle { background-color: var(--theme-btn-bg); }
+        .theme-toggle:hover { background-color: var(--theme-btn-hover); }
+
+        .main-app {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            align-items: center;
+            width: 95vw;
+            max-width: 1000px;
+            box-sizing: border-box;
+        }
+
+        @media (min-width: 768px) {
+            .main-app {
+                flex-direction: row;
+                align-items: flex-start;
+                justify-content: center;
+                gap: 32px;
+            }
+        }
+
+        .grid-wrapper {
+            width: 100%;
+            padding: 20px;
+            border-radius: 20px;
+            box-sizing: border-box;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        @media (min-width: 768px) {
+            .grid-wrapper {
+                width: auto;
+                flex-grow: 1;
+                max-width: 650px;
+            }
+        }
+
+        #grid-container {
+            display: grid;
+            gap: 6px;
+            transition: background-color 0.3s, border-color 0.3s;
+            margin: 0 auto;
+        }
+
+        .palette {
+            padding: 20px;
+            border-radius: 20px;
+            display: grid;
+            grid-template-columns: repeat(5, 64px);
+            justify-content: center;
+            gap: 16px;
+            box-sizing: border-box;
+            max-width: 550px;
+        }
+
+        @media (min-width: 768px) {
+            .palette {
+                grid-template-columns: repeat(2, 64px);
+            }
+        }
+
+        .swatch {
+            width: 64px;
+            height: 64px;
+            border-radius: 12px;
+            cursor: grab;
+            border: 2.5px solid transparent;
+            box-sizing: border-box;
+            box-shadow: var(--shadow-md);
+            touch-action: none;
+            object-fit: cover;
+            transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+        }
+        .swatch:hover {
+            transform: scale(1.05);
+        }
+        .swatch:active { 
+            cursor: grabbing; 
+            transform: scale(0.98);
+        }
+        .swatch.selected {
+            border-color: #ffffff;
+            transform: scale(1.08);
+            box-shadow: 0 0 16px rgba(99, 102, 241, 0.6);
+        }
+        body:not(.dark-mode) .swatch.selected { border-color: #312e81; }
+
+        .eraser-swatch {
+            background-color: rgba(255, 255, 255, 0.5);
+            border: 2.5px solid var(--cell-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            cursor: pointer;
+        }
+        body.dark-mode .eraser-swatch {
+            background-color: rgba(15, 23, 42, 0.6);
+        }
+
+        .cell {
+            border: 2px solid var(--cell-border);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background-color: var(--cell-bg);
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            cursor: pointer;
+            transition: background-color 0.1s, border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+            box-sizing: border-box;
+        }
+        .cell:hover { 
+            border-color: var(--cell-hover-border); 
+            transform: scale(1.03);
+            z-index: 1;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+        }
+        
+        #floating-preview {
+            position: fixed;
+            width: 64px;
+            height: 64px;
+            border-radius: 12px;
+            pointer-events: none;
+            z-index: 1000;
+            display: none;
+            border: 3px solid #ffffff;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+            transform: translate(-50%, -50%) scale(1.15);
+            transition: box-shadow 0.15s ease, transform 0.15s ease;
+        }
+
+        p { 
+            color: var(--subtext-color); 
+            text-align: center; 
+            max-width: 400px; 
+            font-weight: 600; 
+            margin: 0; 
+            font-size: 13px; 
+            letter-spacing: 0.5px;
+        }
+        p b { color: var(--cell-hover-border); }
+    </style>
+</head>
+<body>
+
+    <div id="floating-preview"></div>
+
+    <div class="controls">
+        <label for="rows">Rows:</label>
+        <input type="number" id="rows" min="1" max="20" value="4" inputmode="numeric">
+        <label for="cols">Columns:</label>
+        <input type="number" id="cols" min="1" max="20" value="4" inputmode="numeric">
+        <br>
+        <button onclick="generateGrid()">Generate / Reset Grid</button>
+        <button class="clear-btn" onclick="clearAll()">Clear All</button>
+        <button class="theme-toggle" onclick="toggleTheme()">🌓 Toggle Dark/Light</button>
+    </div>
+
+    <p>Brought to you by an <b>ISTJ</b></p>
+
+    <div class="main-app">
+        <div class="grid-wrapper">
+            <div id="grid-container"></div>
+        </div>
+
+        <div class="palette">
+            <img src="image1.png" class="swatch" data-item="image1.png" alt="Card 1" draggable="true" onclick="selectColor(this, 'image1.png')" ondragstart="drag(event, 'image1.png')">
+            <img src="image2.png" class="swatch" data-item="image2.png" alt="Card 2" draggable="true" onclick="selectColor(this, 'image2.png')" ondragstart="drag(event, 'image2.png')">
+            <img src="image3.png" class="swatch" data-item="image3.png" alt="Card 3" draggable="true" onclick="selectColor(this, 'image3.png')" ondragstart="drag(event, 'image3.png')">
+            <img src="image4.png" class="swatch" data-item="image4.png" alt="Card 4" draggable="true" onclick="selectColor(this, 'image4.png')" ondragstart="drag(event, 'image4.png')">
+            <img src="image5.png" class="swatch" data-item="image5.png" alt="Card 5" draggable="true" onclick="selectColor(this, 'image5.png')" ondragstart="drag(event, 'image5.png')">
+            <img src="image9.png" class="swatch" data-item="image9.png" alt="Card 9" draggable="true" onclick="selectColor(this, 'image9.png')" ondragstart="drag(event, 'image9.png')">
+            <img src="image6.png" class="swatch" data-item="image6.png" alt="Card 6" draggable="true" onclick="selectColor(this, 'image6.png')" ondragstart="drag(event, 'image6.png')">
+            <img src="image7.png" class="swatch" data-item="image7.png" alt="Card 7" draggable="true" onclick="selectColor(this, 'image7.png')" ondragstart="drag(event, 'image7.png')">
+            <img src="image8.png" class="swatch" data-item="image8.png" alt="Card 8" draggable="true" onclick="selectColor(this, 'image8.png')" ondragstart="drag(event, 'image8.png')">
+            <div class="swatch eraser-swatch" data-item="" onclick="selectColor(this, '')" title="Eraser" draggable="true" ondragstart="drag(event, '')">🧹</div>
+        </div>
+    </div>
+
+    <script>
+        let currentlySelectedColor = null;
+        let draggedColor = null;
+        let activePointerId = null;
+        const floatingPreview = document.getElementById('floating-preview');
+
+        function generateGrid() {
+            const rows = parseInt(document.getElementById('rows').value) || 1;
+            const cols = parseInt(document.getElementById('cols').value) || 1;
+            const container = document.getElementById('grid-container');
+            
+            localStorage.setItem('savedRows', rows);
+            localStorage.setItem('savedCols', cols);
+            
+            const isDesktop = window.innerWidth >= 768;
+            const availableWidth = isDesktop ? (window.innerWidth * 0.82) - 140 : window.innerWidth * 0.88;
+            const availableHeight = window.innerHeight * 0.65;
+            const gap = 6; // slightly adjusted gap
+            
+            const widthCell = Math.floor((availableWidth - (cols - 1) * gap) / cols);
+            const heightCell = Math.floor((availableHeight - (rows - 1) * gap) / rows);
+            
+            let cellSize = Math.min(widthCell, heightCell);
+            cellSize = Math.min(Math.max(cellSize, 15), 80);
+
+            container.style.gridTemplateRows = `repeat(${rows}, ${cellSize}px)`;
+            container.style.gridTemplateColumns = `repeat(${cols}, ${cellSize}px)`;
+            container.innerHTML = '';
+
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    cell.style.width = `${cellSize}px`;
+                    cell.style.height = `${cellSize}px`;
+                    
+                    cell.addEventListener('dragover', (e) => e.preventDefault());
+                    cell.addEventListener('drop', (e) => {
+                        e.preventDefault();
+                        const item = e.dataTransfer.getData('item');
+                        applyItemToCell(cell, item);
+                    });
+
+                    cell.addEventListener('click', () => {
+                        applyItemToCell(cell, currentlySelectedColor);
+                    });
+
+                    container.appendChild(cell);
+                }
+            }
+        }
+
+        function applyItemToCell(cell, itemVal) {
+            if (itemVal !== null && itemVal !== undefined) {
+                if (itemVal.includes('.')) {
+                    cell.style.backgroundImage = `url('${itemVal}')`;
+                    cell.style.backgroundColor = '';
+                } else if (itemVal === '') {
+                    cell.style.backgroundImage = '';
+                    cell.style.backgroundColor = '';
+                } else {
+                    cell.style.backgroundImage = '';
+                    cell.style.backgroundColor = itemVal;
+                }
+            }
+        }
+
+        document.querySelectorAll('.swatch').forEach(swatch => {
+            swatch.addEventListener('pointerdown', (e) => {
+                if (activePointerId !== null) return;
+                activePointerId = e.pointerId;
+                
+                draggedColor = swatch.getAttribute('data-item');
+                
+                floatingPreview.style.width = '64px';
+                floatingPreview.style.height = '64px';
+                
+                if (draggedColor && draggedColor.includes('.')) {
+                    floatingPreview.style.backgroundImage = `url('${draggedColor}')`;
+                    floatingPreview.style.backgroundColor = '';
+                } else {
+                    floatingPreview.style.backgroundImage = '';
+                    floatingPreview.style.backgroundColor = draggedColor || 'rgba(255, 255, 255, 0.3)';
+                }
+                
+                floatingPreview.style.display = 'block';
+                swatch.setPointerCapture(e.pointerId);
+
+                document.querySelectorAll('.swatch').forEach(s => s.classList.remove('selected'));
+                currentlySelectedColor = null;
+                
+                e.preventDefault();
+            });
+        });
+
+        window.addEventListener('pointermove', (e) => {
+            if (activePointerId !== e.pointerId) return;
+            if (draggedColor !== null) {
+                floatingPreview.style.left = e.clientX + 'px';
+                floatingPreview.style.top = e.clientY + 'px';
+            }
+        });
+
+        window.addEventListener('pointerup', (e) => {
+            if (activePointerId !== e.pointerId) return;
+            
+            if (draggedColor !== null) {
+                floatingPreview.style.display = 'none';
+                
+                const dropTarget = document.elementFromPoint(e.clientX, e.clientY);
+                
+                if (dropTarget && dropTarget.classList.contains('cell')) {
+                    applyItemToCell(dropTarget, draggedColor);
+                }
+                
+                e.target.releasePointerCapture?.(e.pointerId);
+                draggedColor = null;
+                activePointerId = null;
+            }
+        });
+        
+        window.addEventListener('pointercancel', (e) => {
+            if (activePointerId === e.pointerId) {
+                floatingPreview.style.display = 'none';
+                draggedColor = null;
+                activePointerId = null;
+            }
+        });
+
+        function selectColor(element, color) {
+            if (element.classList.contains('selected')) {
+                element.classList.remove('selected');
+                currentlySelectedColor = null;
+            } else {
+                document.querySelectorAll('.swatch').forEach(s => s.classList.remove('side-ui'));
+                document.querySelectorAll('.swatch').forEach(s => s.classList.remove('selected'));
+                element.classList.add('selected');
+                currentlySelectedColor = color;
+            }
+        }
+
+        function drag(event, item) {
+            event.dataTransfer.setData('item', item);
+            document.querySelectorAll('.swatch').forEach(s => s.classList.remove('selected'));
+            currentlySelectedColor = null;
+        }
+
+        function clearAll() {
+            const cells = document.querySelectorAll('.cell');
+            cells.forEach(cell => {
+                cell.style.backgroundImage = '';
+                cell.style.backgroundColor = '';
+            });
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+        }
+
+        let windowWidth = window.innerWidth;
+        window.addEventListener('resize', () => {
+            if (window.innerWidth !== windowWidth) {
+                windowWidth = window.innerWidth;
+                generateGrid();
+            }
+        });
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const isDesktop = window.innerWidth >= 768;
+
+            if (localStorage.getItem('savedRows')) {
+                document.getElementById('rows').value = localStorage.getItem('savedRows');
+            } else {
+                document.getElementById('rows').value = isDesktop ? 4 : 2;
+            }
+
+            if (localStorage.getItem('savedCols')) {
+                document.getElementById('cols').value = localStorage.getItem('savedCols');
+            } else {
+                document.getElementById('cols').value = isDesktop ? 2 : 4;
+            }
+
+            generateGrid();
+        });
+    </script>
+</body>
+</html>
             --subtext-color: #b7e4c7;
         }
 
