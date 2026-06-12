@@ -114,12 +114,20 @@
         .main-app {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 16px;
             align-items: center;
             width: 95vw;
-            max-width: 800px;
+            max-width: 1000px;
             box-sizing: border-box;
             touch-action: auto;
+        }
+
+        @media (min-width: 768px) {
+            .main-app {
+                flex-direction: row;
+                align-items: flex-start;
+                justify-content: center;
+            }
         }
 
         .grid-wrapper {
@@ -134,6 +142,14 @@
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
             touch-action: pan-x;
+        }
+
+        @media (min-width: 768px) {
+            .grid-wrapper {
+                width: auto;
+                flex-grow: 1;
+                max-width: 650px;
+            }
         }
 
         #grid-container {
@@ -151,12 +167,18 @@
             flex-wrap: wrap;
             justify-content: center;
             gap: 12px;
-            max-width: 500px;
             box-sizing: border-box;
             touch-action: auto;
         }
 
-        /* Swatch size increased to 60px */
+        @media (min-width: 768px) {
+            .palette {
+                flex-direction: column;
+                align-items: center;
+                width: auto;
+            }
+        }
+
         .swatch {
             width: 60px;
             height: 60px;
@@ -209,8 +231,8 @@
         
         #floating-preview {
             position: fixed;
-            width: 68px;
-            height: 68px;
+            width: 60px;
+            height: 60px;
             border-radius: 8px;
             pointer-events: none;
             z-index: 1000;
@@ -233,9 +255,9 @@
 
     <div class="controls">
         <label for="rows">Rows:</label>
-        <input type="number" id="rows" min="1" max="10" value="4">
+        <input type="number" id="rows" min="1" max="20" value="4">
         <label for="cols">Columns:</label>
-        <input type="number" id="cols" min="1" max="10" value="4">
+        <input type="number" id="cols" min="1" max="20" value="4">
         <br>
         <button onclick="generateGrid()">Generate / Reset Grid</button>
         <button class="clear-btn" onclick="clearAll()">Clear All</button>
@@ -273,15 +295,23 @@
             const cols = parseInt(document.getElementById('cols').value) || 1;
             const container = document.getElementById('grid-container');
             
-            // Save layout state to localStorage
             localStorage.setItem('savedRows', rows);
             localStorage.setItem('savedCols', cols);
             
-            const availableWidth = window.innerWidth * 0.88;
+            const isDesktop = window.innerWidth >= 768;
+            const availableWidth = isDesktop ? (window.innerWidth * 0.82) - 140 : window.innerWidth * 0.88;
+            const availableHeight = window.innerHeight * 0.65;
             const gap = 4;
             
-            let cellSize = Math.floor((availableWidth - (cols - 1) * gap) / cols);
-            cellSize = Math.min(Math.max(cellSize, 45), 95);
+            // Calculate dynamic cell dimensions constrained by both width and height
+            const widthCell = Math.floor((availableWidth - (cols - 1) * gap) / cols);
+            const heightCell = Math.floor((availableHeight - (rows - 1) * gap) / rows);
+            
+            // Use the smallest fit factor to avoid any overflow vertically or horizontally
+            let cellSize = Math.min(widthCell, heightCell);
+            
+            // Allow it to scale down sufficiently so it never breaks limits
+            cellSize = Math.min(Math.max(cellSize, 15), 80);
 
             container.style.gridTemplateRows = `repeat(${rows}, ${cellSize}px)`;
             container.style.gridTemplateColumns = `repeat(${cols}, ${cellSize}px)`;
@@ -328,11 +358,11 @@
         document.querySelectorAll('.swatch').forEach(swatch => {
             swatch.addEventListener('pointerdown', (e) => {
                 if (activePointerId !== null) return;
+                activePointerEvent = e.pointerId;
                 activePointerId = e.pointerId;
                 
                 draggedColor = swatch.getAttribute('data-item');
                 
-                // Match the enlarged preview size
                 floatingPreview.style.width = '60px';
                 floatingPreview.style.height = '60px';
                 
@@ -393,8 +423,8 @@
                 element.classList.remove('selected');
                 currentlySelectedColor = null;
             } else {
+                document.querySelectorAll('.swatch').forEach(s => s.classList.remove('side-ui'));
                 document.querySelectorAll('.swatch').forEach(s => s.classList.remove('selected'));
-                element.classList.add('select-ui');
                 element.classList.add('selected');
                 currentlySelectedColor = color;
             }
