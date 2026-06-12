@@ -18,6 +18,8 @@
             --btn-text: #ffffff;
             --clear-btn-bg: #bb3e03;
             --clear-btn-hover: #9b2226;
+            --lock-btn-bg: #0077b6;
+            --lock-btn-hover: #023e8a;
             --subtext-color: #1b4332;
         }
 
@@ -34,6 +36,8 @@
             --btn-text: #ffffff;
             --clear-btn-bg: #bf616a;
             --clear-btn-hover: #ac535c;
+            --lock-btn-bg: #5e6472;
+            --lock-btn-hover: #4c5361;
             --subtext-color: #b7e4c7;
         }
 
@@ -50,8 +54,9 @@
             min-height: 100vh;
             box-sizing: border-box;
             width: 100%;
-            overflow-x: hidden;
-            touch-action: manipulation;
+            overflow: hidden;
+            overscroll-behavior: none;
+            touch-action: none;
         }
         
         .controls, .palette, .grid-wrapper {
@@ -70,6 +75,7 @@
             width: 100%;
             max-width: 420px;
             box-sizing: border-box;
+            touch-action: auto;
         }
         label { margin-right: 4px; font-weight: bold; font-size: 12px; }
         input[type="number"] { 
@@ -92,6 +98,7 @@
             transition: background-color 0.2s, filter 0.2s;
             margin-top: 4px;
             font-size: 11px;
+            touch-action: auto;
         }
         button:hover { background-color: var(--btn-hover); filter: brightness(1.1); }
         
@@ -101,6 +108,14 @@
         }
         .clear-btn:hover {
             background-color: var(--clear-btn-hover);
+        }
+
+        .lock-btn {
+            background-color: var(--lock-btn-bg);
+            margin-left: 4px;
+        }
+        .lock-btn:hover {
+            background-color: var(--lock-btn-hover);
         }
 
         .theme-toggle {
@@ -116,6 +131,7 @@
             width: 95vw;
             max-width: 800px;
             box-sizing: border-box;
+            touch-action: auto;
         }
 
         .grid-wrapper {
@@ -129,6 +145,7 @@
             align-items: center;
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
+            touch-action: pan-x;
         }
 
         #grid-container {
@@ -148,6 +165,7 @@
             gap: 8px;
             max-width: 360px;
             box-sizing: border-box;
+            touch-action: auto;
         }
 
         .swatch {
@@ -159,6 +177,7 @@
             box-sizing: border-box;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             touch-action: none;
+            object-fit: cover;
         }
         .swatch:active { cursor: grabbing; }
         .swatch.selected {
@@ -174,7 +193,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 16px;
+            font-size: 22px;
             cursor: pointer;
         }
         body.dark-mode .eraser-swatch {
@@ -189,12 +208,18 @@
             justify-content: center;
             position: relative;
             background-color: var(--cell-bg);
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
             cursor: pointer;
             transition: background-color 0.1s, border-color 0.3s;
             box-shadow: inset 0 0 4px rgba(0,0,0,0.05);
             box-sizing: border-box;
         }
-        .cell:hover { border-color: var(--cell-hover-border); transform: scale(1.02); }
+        .cell.locked {
+            cursor: not-allowed;
+        }
+        .cell:not(.locked):hover { border-color: var(--cell-hover-border); transform: scale(1.02); }
         
         #floating-preview {
             position: fixed;
@@ -205,6 +230,9 @@
             z-index: 1000;
             display: none;
             border: 2px solid #fff;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
             box-shadow: 8px 14px 20px rgba(0, 0, 0, 0.45);
             transform: translate(-50%, -50%) scale(1.15);
             transition: box-shadow 0.15s ease, transform 0.15s ease;
@@ -225,6 +253,7 @@
         <br>
         <button onclick="generateGrid()">Generate / Reset Grid</button>
         <button class="clear-btn" onclick="clearAll()">Clear All</button>
+        <button id="lock-btn" class="lock-btn" onclick="toggleLock()">🔒 Lock Grid</button>
         <button class="theme-toggle" onclick="toggleTheme()">🌓 Toggle Dark/Light</button>
     </div>
 
@@ -236,14 +265,15 @@
         </div>
 
         <div class="palette">
-            <div class="swatch" style="background-color: #ff3b30;" data-color="#ff3b30" draggable="true" onclick="selectColor(this, '#ff3b30')" ondragstart="drag(event, '#ff3b30')"></div>
-            <div class="swatch" style="background-color: #ff9500;" data-color="#ff9500" draggable="true" onclick="selectColor(this, '#ff9500')" ondragstart="drag(event, '#ff9500')"></div>
-            <div class="swatch" style="background-color: #ffcc00;" data-color="#ffcc00" draggable="true" onclick="selectColor(this, '#ffcc00')" ondragstart="drag(event, '#ffcc00')"></div>
-            <div class="swatch" style="background-color: #4cd964;" data-color="#4cd964" draggable="true" onclick="selectColor(this, '#4cd964')" ondragstart="drag(event, '#4cd964')"></div>
-            <div class="swatch" style="background-color: #5ac8fa;" data-color="#5ac8fa" draggable="true" onclick="selectColor(this, '#5ac8fa')" ondragstart="drag(event, '#5ac8fa')"></div>
-            <div class="swatch" style="background-color: #5856d6;" data-color="#5856d6" draggable="true" onclick="selectColor(this, '#5856d6')" ondragstart="drag(event, '#5856d6')"></div>
-            <div class="swatch" style="background-color: #ff2d55;" data-color="#ff2d55" draggable="true" onclick="selectColor(this, '#ff2d55')" ondragstart="drag(event, '#ff2d55')"></div>
-            <div class="swatch eraser-swatch" data-color="" onclick="selectColor(this, '')" title="Eraser" draggable="true" ondragstart="drag(event, '')">🧹</div>
+            <img src="image1.png" class="swatch" data-item="image1.png" alt="Card 1" draggable="true" onclick="selectColor(this, 'image1.png')" ondragstart="drag(event, 'image1.png')">
+            <img src="image2.png" class="swatch" data-item="image2.png" alt="Card 2" draggable="true" onclick="selectColor(this, 'image2.png')" ondragstart="drag(event, 'image2.png')">
+            <img src="image3.png" class="swatch" data-item="image3.png" alt="Card 3" draggable="true" onclick="selectColor(this, 'image3.png')" ondragstart="drag(event, 'image3.png')">
+            <img src="image4.png" class="swatch" data-item="image4.png" alt="Card 4" draggable="true" onclick="selectColor(this, 'image4.png')" ondragstart="drag(event, 'image4.png')">
+            <img src="image5.png" class="swatch" data-item="image5.png" alt="Card 5" draggable="true" onclick="selectColor(this, 'image5.png')" ondragstart="drag(event, 'image5.png')">
+            <img src="image6.png" class="swatch" data-item="image6.png" alt="Card 6" draggable="true" onclick="selectColor(this, 'image6.png')" ondragstart="drag(event, 'image6.png')">
+            <img src="image7.png" class="swatch" data-item="image7.png" alt="Card 7" draggable="true" onclick="selectColor(this, 'image7.png')" ondragstart="drag(event, 'image7.png')">
+            <img src="image8.png" class="swatch" data-item="image8.png" alt="Card 8" draggable="true" onclick="selectColor(this, 'image8.png')" ondragstart="drag(event, 'image8.png')">
+            <div class="swatch eraser-swatch" data-item="" onclick="selectColor(this, '')" title="Eraser" draggable="true" ondragstart="drag(event, '')">🧹</div>
         </div>
     </div>
 
@@ -251,6 +281,7 @@
         let currentlySelectedColor = null;
         let draggedColor = null;
         let activePointerId = null;
+        let isGridLocked = false;
         const floatingPreview = document.getElementById('floating-preview');
 
         function generateGrid() {
@@ -266,7 +297,7 @@
             const gap = 4;
             
             let cellSize = Math.floor((availableWidth - (cols - 1) * gap) / cols);
-            cellSize = Math.min(Math.max(cellSize, 25), 65);
+            cellSize = Math.min(Math.max(cellSize, 35), 75);
 
             container.style.gridTemplateRows = `repeat(${rows}, ${cellSize}px)`;
             container.style.gridTemplateColumns = `repeat(${cols}, ${cellSize}px)`;
@@ -276,22 +307,24 @@
                 for (let c = 0; c < cols; c++) {
                     const cell = document.createElement('div');
                     cell.className = 'cell';
+                    if (isGridLocked) cell.classList.add('locked');
                     cell.style.width = `${cellSize}px`;
                     cell.style.height = `${cellSize}px`;
                     
-                    cell.addEventListener('dragover', (e) => e.preventDefault());
-                    cell.addEventListener('drop', (e) => {
+                    cell.addEventListener('dragover', (e) => {
+                        if (isGridLocked) return;
                         e.preventDefault();
-                        const color = e.dataTransfer.getData('color');
-                        cell.style.backgroundColor = color;
+                    });
+                    cell.addEventListener('drop', (e) => {
+                        if (isGridLocked) return;
+                        e.preventDefault();
+                        const item = e.dataTransfer.getData('item');
+                        applyItemToCell(cell, item);
                     });
 
                     cell.addEventListener('click', () => {
-                        if (currentlySelectedColor !== null) {
-                            cell.style.backgroundColor = currentlySelectedColor;
-                        } else {
-                            cell.style.backgroundColor = '';
-                        }
+                        if (isGridLocked) return;
+                        applyItemToCell(cell, currentlySelectedColor);
                     });
 
                     container.appendChild(cell);
@@ -299,15 +332,38 @@
             }
         }
 
+        function applyItemToCell(cell, itemVal) {
+            if (itemVal !== null && itemVal !== undefined) {
+                if (itemVal.includes('.')) {
+                    cell.style.backgroundImage = `url('${itemVal}')`;
+                    cell.style.backgroundColor = '';
+                } else if (itemVal === '') {
+                    cell.style.backgroundImage = '';
+                    cell.style.backgroundColor = '';
+                } else {
+                    cell.style.backgroundImage = '';
+                    cell.style.backgroundColor = itemVal;
+                }
+            }
+        }
+
         document.querySelectorAll('.swatch').forEach(swatch => {
             swatch.addEventListener('pointerdown', (e) => {
+                if (isGridLocked) return;
                 if (activePointerId !== null) return;
                 activePointerId = e.pointerId;
                 
-                draggedColor = swatch.getAttribute('data-color');
-                floatingPreview.style.backgroundColor = draggedColor || 'rgba(255, 255, 255, 0.3)';
-                floatingPreview.style.display = 'block';
+                draggedColor = swatch.getAttribute('data-item');
                 
+                if (draggedColor && draggedColor.includes('.')) {
+                    floatingPreview.style.backgroundImage = `url('${draggedColor}')`;
+                    floatingPreview.style.backgroundColor = '';
+                } else {
+                    floatingPreview.style.backgroundImage = '';
+                    floatingPreview.style.backgroundColor = draggedColor || 'rgba(255, 255, 255, 0.3)';
+                }
+                
+                floatingPreview.style.display = 'block';
                 swatch.setPointerCapture(e.pointerId);
 
                 document.querySelectorAll('.swatch').forEach(s => s.classList.remove('selected'));
@@ -318,6 +374,7 @@
         });
 
         window.addEventListener('pointermove', (e) => {
+            if (isGridLocked) return;
             if (activePointerId !== e.pointerId) return;
             if (draggedColor !== null) {
                 floatingPreview.style.left = e.clientX + 'px';
@@ -326,6 +383,7 @@
         });
 
         window.addEventListener('pointerup', (e) => {
+            if (isGridLocked) return;
             if (activePointerId !== e.pointerId) return;
             
             if (draggedColor !== null) {
@@ -333,8 +391,8 @@
                 
                 const dropTarget = document.elementFromPoint(e.clientX, e.clientY);
                 
-                if (dropTarget && dropTarget.classList.contains('cell')) {
-                    dropTarget.style.backgroundColor = draggedColor;
+                if (dropTarget && dropTarget.classList.contains('cell') && !dropTarget.classList.contains('locked')) {
+                    applyItemToCell(dropTarget, draggedColor);
                 }
                 
                 e.target.releasePointerCapture?.(e.pointerId);
@@ -352,6 +410,7 @@
         });
 
         function selectColor(element, color) {
+            if (isGridLocked) return;
             if (element.classList.contains('selected')) {
                 element.classList.remove('selected');
                 currentlySelectedColor = null;
@@ -363,17 +422,41 @@
             }
         }
 
-        function drag(event, color) {
-            event.dataTransfer.setData('color', color);
+        function drag(event, item) {
+            if (isGridLocked) {
+                event.preventDefault();
+                return;
+            }
+            event.dataTransfer.setData('item', item);
             document.querySelectorAll('.swatch').forEach(s => s.classList.remove('selected'));
             currentlySelectedColor = null;
         }
 
         function clearAll() {
+            if (isGridLocked) return;
             const cells = document.querySelectorAll('.cell');
             cells.forEach(cell => {
+                cell.style.backgroundImage = '';
                 cell.style.backgroundColor = '';
             });
+        }
+
+        function toggleLock() {
+            isGridLocked = !isGridLocked;
+            const lockBtn = document.getElementById('lock-btn');
+            const cells = document.querySelectorAll('.cell');
+            
+            if (isGridLocked) {
+                lockBtn.innerHTML = '🔓 Unlock Grid';
+                lockBtn.style.backgroundColor = '#2a9d8f';
+                cells.forEach(cell => cell.classList.add('locked'));
+            } else {
+                lockBtn.innerHTML = '🔒 Lock Grid';
+                lockBtn.style.backgroundColor = 'var(--lock-btn-bg)';
+                cells.forEach(cell => cell.classList.remove('locked'));
+            }
+            document.querySelectorAll('.swatch').forEach(s => s.classList.remove('selected'));
+            currentlySelectedColor = null;
         }
 
         function toggleTheme() {
