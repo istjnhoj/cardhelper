@@ -167,6 +167,7 @@
             flex-wrap: wrap;
             justify-content: center;
             gap: 12px;
+            max-width: 550px;
             box-sizing: border-box;
             touch-action: auto;
         }
@@ -255,9 +256,9 @@
 
     <div class="controls">
         <label for="rows">Rows:</label>
-        <input type="number" id="rows" min="1" max="20" value="4">
+        <input type="number" id="rows" min="1" max="20" value="4" inputmode="numeric">
         <label for="cols">Columns:</label>
-        <input type="number" id="cols" min="1" max="20" value="4">
+        <input type="number" id="cols" min="1" max="20" value="4" inputmode="numeric">
         <br>
         <button onclick="generateGrid()">Generate / Reset Grid</button>
         <button class="clear-btn" onclick="clearAll()">Clear All</button>
@@ -278,6 +279,7 @@
             <img src="image4.png" class="swatch" data-item="image4.png" alt="Card 4" draggable="true" onclick="selectColor(this, 'image4.png')" ondragstart="drag(event, 'image4.png')">
             <img src="image5.png" class="swatch" data-item="image5.png" alt="Card 5" draggable="true" onclick="selectColor(this, 'image5.png')" ondragstart="drag(event, 'image5.png')">
             <img src="image6.png" class="swatch" data-item="image6.png" alt="Card 6" draggable="true" onclick="selectColor(this, 'image6.png')" ondragstart="drag(event, 'image6.png')">
+            <img src="image9.png" class="swatch" data-item="image9.png" alt="Card 9" draggable="true" onclick="selectColor(this, 'image9.png')" ondragstart="drag(event, 'image9.png')">
             <img src="image7.png" class="swatch" data-item="image7.png" alt="Card 7" draggable="true" onclick="selectColor(this, 'image7.png')" ondragstart="drag(event, 'image7.png')">
             <img src="image8.png" class="swatch" data-item="image8.png" alt="Card 8" draggable="true" onclick="selectColor(this, 'image8.png')" ondragstart="drag(event, 'image8.png')">
             <div class="swatch eraser-swatch" data-item="" onclick="selectColor(this, '')" title="Eraser" draggable="true" ondragstart="drag(event, '')">🧹</div>
@@ -303,14 +305,10 @@
             const availableHeight = window.innerHeight * 0.65;
             const gap = 4;
             
-            // Calculate dynamic cell dimensions constrained by both width and height
             const widthCell = Math.floor((availableWidth - (cols - 1) * gap) / cols);
             const heightCell = Math.floor((availableHeight - (rows - 1) * gap) / rows);
             
-            // Use the smallest fit factor to avoid any overflow vertically or horizontally
             let cellSize = Math.min(widthCell, heightCell);
-            
-            // Allow it to scale down sufficiently so it never breaks limits
             cellSize = Math.min(Math.max(cellSize, 15), 80);
 
             container.style.gridTemplateRows = `repeat(${rows}, ${cellSize}px)`;
@@ -379,6 +377,21 @@
 
                 document.querySelectorAll('.swatch').forEach(s => s.classList.remove('selected'));
                 currentlySelectedColor = null;
+                currentlySelectedColor = null; // reset
+                currentlySelectedColor = null;
+                currentlySelectedColor = null;
+                currentlySelectedColor = null;
+                currentlySelectedColor = null;
+                currentlySelectedColor = null;
+                currentlySelectedColor = null;
+                currentlySelectedColor = null;
+                currentlySelectedColor = null;
+                currentlySelectedColor = null;
+                currentlySelectedColor = null;
+                currentlySelectedColor = null;
+currentlySelectedColor = null;
+currentlySelectedColor = null;
+currentlySelectedColor = null;
                 
                 e.preventDefault();
             });
@@ -448,7 +461,6 @@
             document.body.classList.toggle('dark-mode');
         }
 
-        // Ignore height-only resizes (scrolling address bar) to avoid accidental grid regeneration
         let windowWidth = window.innerWidth;
         window.addEventListener('resize', () => {
             if (window.innerWidth !== windowWidth) {
@@ -457,7 +469,6 @@
             }
         });
 
-        // Load saved settings on page load
         window.addEventListener('DOMContentLoaded', () => {
             if (localStorage.getItem('savedRows')) {
                 document.getElementById('rows').value = localStorage.getItem('savedRows');
