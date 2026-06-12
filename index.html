@@ -1,39 +1,261 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Card Matching Helper Grid</title>
-    <style>
-        :root {
-            --bg-color: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
-            --text-color: #0f172a;
-            --container-bg: rgba(255, 255, 255, 0.6);
-            --cell-bg: rgba(255, 255, 255, 0.4);
-            --cell-border: #cbd5e1;
-            --cell-hover-border: #6366f1;
-            --btn-bg: #4f46e5;
-            --btn-hover: #4338ca;
-            --btn-text: #ffffff;
-            --clear-btn-bg: #ef4444;
-            --clear-btn-hover: #dc2626;
-            --theme-btn-bg: #334155;
-            --theme-btn-hover: #1e293b;
-            --subtext-color: #475569;
-            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Card Matching Helper Grid</title>
 
-        body.dark-mode {
-            --bg-color: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            --text-color: #f8fafc;
-            --container-bg: rgba(30, 41, 59, 0.5);
-            --cell-bg: rgba(15, 23, 42, 0.4);
-            --cell-border: #334155;
-            --cell-hover-border: #818cf8;
-            --btn-bg: #6366f1;
-            --btn-hover: #4f46e5;
+<style>
+:root {
+    --bg-color: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+    --text-color: #0f172a;
+    --container-bg: rgba(255, 255, 255, 0.6);
+    --cell-bg: rgba(255, 255, 255, 0.4);
+    --cell-border: #cbd5e1;
+    --cell-hover-border: #6366f1;
+    --btn-bg: #4f46e5;
+    --btn-hover: #4338ca;
+    --btn-text: #ffffff;
+    --clear-btn-bg: #ef4444;
+    --clear-btn-hover: #dc2626;
+    --theme-btn-bg: #334155;
+    --theme-btn-hover: #1e293b;
+    --subtext-color: #475569;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+    --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+}
+
+body.dark-mode {
+    --bg-color: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    --text-color: #f8fafc;
+    --container-bg: rgba(30, 41, 59, 0.5);
+    --cell-bg: rgba(15, 23, 42, 0.4);
+    --cell-border: #334155;
+    --cell-hover-border: #818cf8;
+    --btn-bg: #6366f1;
+    --btn-hover: #4f46e5;
+    --clear-btn-bg: #f87171;
+    --clear-btn-hover: #ef4444;
+    --theme-btn-bg: #475569;
+    --theme-btn-hover: #334155;
+    --subtext-color: #94a3b8;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 16px;
+    background: var(--bg-color);
+    color: var(--text-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.controls {
+    background: var(--container-bg);
+    padding: 16px;
+    border-radius: 12px;
+    margin-bottom: 16px;
+}
+
+button {
+    padding: 10px 14px;
+    margin: 4px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    background: var(--btn-bg);
+    color: white;
+}
+
+.clear-btn { background: var(--clear-btn-bg); }
+.theme-toggle { background: var(--theme-btn-bg); }
+
+.main-app {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.grid-wrapper {
+    padding: 10px;
+    background: var(--container-bg);
+    border-radius: 12px;
+}
+
+#grid-container {
+    display: grid;
+    gap: 6px;
+}
+
+.cell {
+    width: 60px;
+    height: 60px;
+    border: 2px solid var(--cell-border);
+    background: var(--cell-bg);
+    background-size: cover;
+    background-position: center;
+    cursor: pointer;
+}
+
+.palette {
+    display: grid;
+    grid-template-columns: repeat(5, 60px);
+    gap: 10px;
+    padding: 10px;
+    background: var(--container-bg);
+    border-radius: 12px;
+    align-items: center;
+}
+
+.swatch {
+    width: 60px;
+    height: 60px;
+    cursor: grab;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.swatch.selected {
+    outline: 3px solid #6366f1;
+}
+
+.eraser-swatch {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    background: rgba(255,255,255,0.5);
+    cursor: pointer;
+}
+
+#floating-preview {
+    position: fixed;
+    width: 50px;
+    height: 50px;
+    pointer-events: none;
+    display: none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="controls">
+    <label>Rows:</label>
+    <input id="rows" type="number" value="4" min="1">
+    <label>Cols:</label>
+    <input id="cols" type="number" value="4" min="1">
+
+    <button onclick="generateGrid()">Generate</button>
+    <button class="clear-btn" onclick="clearAll()">Clear</button>
+    <button class="theme-toggle" onclick="toggleTheme()">Theme</button>
+</div>
+
+<div class="main-app">
+    <div class="grid-wrapper">
+        <div id="grid-container"></div>
+    </div>
+
+    <div class="palette">
+        <img src="image1.png" class="swatch" onclick="selectColor(this,'image1.png')" ondragstart="drag(event,'image1.png')" alt="img1">
+        <img src="image2.png" class="swatch" onclick="selectColor(this,'image2.png')" ondragstart="drag(event,'image2.png')" alt="img2">
+        <img src="image3.png" class="swatch" onclick="selectColor(this,'image3.png')" ondragstart="drag(event,'image3.png')" alt="img3">
+        <img src="image4.png" class="swatch" onclick="selectColor(this,'image4.png')" ondragstart="drag(event,'image4.png')" alt="img4">
+        <div class="swatch eraser-swatch" draggable="true" onclick="selectColor(this,'')" ondragstart="drag(event,'')">🧹</div>
+    </div>
+</div>
+
+<script>
+let currentlySelectedColor = null;
+let draggedColor = null;
+
+function generateGrid() {
+    const rows = parseInt(document.getElementById('rows').value) || 1;
+    const cols = parseInt(document.getElementById('cols').value) || 1;
+
+    const container = document.getElementById('grid-container');
+    container.innerHTML = '';
+
+    container.style.gridTemplateColumns = `repeat(${cols}, 60px)`;
+    container.style.gridTemplateRows = `repeat(${rows}, 60px)`;
+
+    const saved = JSON.parse(localStorage.getItem('gridData') || '[]');
+
+    let index = 0;
+
+    for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+
+            const cell = document.createElement('div');
+            cell.className = 'cell';
+
+            if (saved[index]) {
+                cell.style.backgroundImage = saved[index];
+            }
+
+            cell.ondragover = e => e.preventDefault();
+
+            cell.ondrop = () => {
+                applyToCell(cell);
+            };
+
+            cell.onclick = () => {
+                applyToCell(cell);
+            };
+
+            container.appendChild(cell);
+            index++;
+        }
+    }
+}
+
+function applyToCell(cell) {
+    if (currentlySelectedColor === null) return;
+
+    if (currentlySelectedColor === '') {
+        cell.style.backgroundImage = '';
+    } else {
+        cell.style.backgroundImage = `url(${currentlySelectedColor})`;
+    }
+
+    saveGrid();
+}
+
+function selectColor(el, color) {
+    document.querySelectorAll('.swatch').forEach(s => s.classList.remove('selected'));
+    el.classList.add('selected');
+    currentlySelectedColor = color;
+}
+
+function drag(e, color) {
+    draggedColor = color;
+    currentlySelectedColor = color;
+}
+
+function clearAll() {
+    document.querySelectorAll('.cell').forEach(c => c.style.backgroundImage = '');
+    saveGrid();
+}
+
+function toggleTheme() {
+    document.body.classList.toggle('dark-mode');
+}
+
+function saveGrid() {
+    const data = Array.from(document.querySelectorAll('.cell'))
+        .map(c => c.style.backgroundImage || '');
+    localStorage.setItem('gridData', JSON.stringify(data));
+}
+
+window.onload = generateGrid;
+</script>
+
+</body>
+</html>
             --btn-text: #ffffff;
             --clear-btn-bg: #f87171;
             --clear-btn-hover: #ef4444;
