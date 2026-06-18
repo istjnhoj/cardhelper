@@ -52,7 +52,6 @@
             width: 100%;
             overflow-y: auto;
             overflow-x: hidden;
-            margin: 0;
         }
         
         .controls, .palette, .grid-wrapper {
@@ -136,7 +135,8 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            overflow: hidden; /* Prevent horizontal scrollbars */
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         @media (min-width: 768px) {
@@ -291,17 +291,14 @@
             localStorage.setItem('savedRows', rows);
             localStorage.setItem('savedCols', cols);
             
-            // Auto-fitting math to stay fit securely in the screen without overflowing
+            // Calculate cellSize purely based on width to prevent table vanishing acts
             const isDesktop = window.innerWidth >= 768;
-            const availableWidth = isDesktop ? Math.min((window.innerWidth * 0.75) - 140, 650) : window.innerWidth * 0.80;
-            const availableHeight = window.innerHeight * 0.5;
+            const availableWidth = isDesktop ? (window.innerWidth * 0.75) - 140 : window.innerWidth * 0.85;
             const gap = 4;
             
-            const widthCell = Math.floor((availableWidth - (cols - 1) * gap) / cols);
-            const heightCell = Math.floor((availableHeight - (rows - 1) * gap) / rows);
-            
-            let cellSize = Math.min(widthCell, heightCell);
-            cellSize = Math.min(Math.max(cellSize, 20), 75);
+            let cellSize = Math.floor((availableWidth - (cols - 1) * gap) / cols);
+            // Constrain sizes safely
+            cellSize = Math.min(Math.max(cellSize, 25), 85);
 
             container.style.gridTemplateRows = `repeat(${rows}, ${cellSize}px)`;
             container.style.gridTemplateColumns = `repeat(${cols}, ${cellSize}px)`;
